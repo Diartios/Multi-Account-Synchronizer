@@ -50,89 +50,12 @@ namespace Multi_Account_Synchronizer
 
         public static int[][] LoadMap(int map_id)
         {
-            //i've stolen all the code from stradiveri
+            //😎😎😎
             byte[] data = null;
-            int width = 0;
-            int height = 0;
-            try
-            {
-                FileStream fs = File.OpenRead("maps.zip");
-                ZipFile zipfile = new ZipFile(fs);
-                ZipEntry entry = zipfile.GetEntry($"{map_id}.bin");
-                if (entry != null)
-                {
-                    using (Stream zipStream = zipfile.GetInputStream(entry))
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        zipStream.CopyTo(memoryStream);
-                        data = memoryStream.ToArray();
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return new int[0][];
-            }
-            if (data == null)
-                return new int[0][];
-            #region bullshit if-else copied from stradiveri
-            if (data[1] == 0)
-            {
-                width = data[0];
-                height = (data.Length - 4) / data[0];
-            }
-            else if (data[3] == 0)
-            {
-                height = data[2];
-                width = (data.Length - 4) / data[2];
-            }
-            else if (data[0] == data[2])
-            {
-                double sqroot = Math.Sqrt(data.Length - 4);
-                width = (int)sqroot;
-                height = (int)sqroot;
-            }
-            else if (data[0] == 19 && data[2] == 14)
-            {
-                width = 275;
-                height = 270;
-            }
-            else if (data[0] == 204 && data[2] == 9)
-            {
-                width = 460;
-                height = 265;
-            }
-            else if (data[0] == 54 && data[2] == 34)
-            {
-                width = 310;
-                height = 290;
-            }
-            else if (data[0] == 54 && data[2] == 44)
-            {
-                width = 310;
-                height = 300;
-            }
-            else if (data[0] == 94 && data[2] == 145)
-            {
-                width = 350;
-                height = 401;
-            }
-            else if (data[0] == 4 && data[2] == 24)
-            {
-                width = 260;
-                height = 280;
-            }
-            else if (data[0] == 16 && data[2] == 10)
-            {
-                width = 272;
-                height = 266;
-            }
-            else
-            {
-                Console.WriteLine($"Error while loading map: {map_id}");
-                return new int[0][];
-            }
-            #endregion
+            
+            int width = BitConverter.ToUInt16(data, 0);
+            int height = BitConverter.ToUInt16(data, 2);
+            
             int[][] result = ConvertToArray(data, width, height);
             return result;
         }
