@@ -50,12 +50,34 @@ namespace Multi_Account_Synchronizer
 
         public static int[][] LoadMap(int map_id)
         {
-            //😎😎😎
+            //i've stolen all the code from stradiveri
             byte[] data = null;
-            
+
+            try
+            {
+                FileStream fs = File.OpenRead("maps.zip");
+                ZipFile zipfile = new ZipFile(fs);
+                ZipEntry entry = zipfile.GetEntry($"{map_id}.bin");
+                if (entry != null)
+                {
+                    using (Stream zipStream = zipfile.GetInputStream(entry))
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        zipStream.CopyTo(memoryStream);
+                        data = memoryStream.ToArray();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return new int[0][];
+            }
+            if (data == null)
+                return new int[0][];
+
             int width = BitConverter.ToUInt16(data, 0);
             int height = BitConverter.ToUInt16(data, 2);
-            
+
             int[][] result = ConvertToArray(data, width, height);
             return result;
         }
