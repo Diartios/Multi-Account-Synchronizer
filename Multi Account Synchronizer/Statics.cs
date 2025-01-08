@@ -17,6 +17,8 @@ namespace Multi_Account_Synchronizer
     {
         public static T JsonGetValueOrDefault<T>(JToken jsonObject, string key, T defaultValue)
         {
+            if (jsonObject == null)
+                return defaultValue;
             try
             {
                 return jsonObject[key].Value<T>();
@@ -68,17 +70,22 @@ namespace Multi_Account_Synchronizer
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)   
             {
+                Console.WriteLine(e.Message);
                 return new int[0][];
             }
             if (data == null)
+            {
+                Console.WriteLine($"data null map id {map_id}");
                 return new int[0][];
+            }
+                
 
             int width = BitConverter.ToUInt16(data, 0);
             int height = BitConverter.ToUInt16(data, 2);
 
-            int[][] result = ConvertToArray(data, width, height);
+            int[][] result = ConvertToArray(data.Skip(4).ToArray(), width, height);
             return result;
         }
         static int[][] ConvertToArray(byte[] data, int width, int height)
@@ -90,14 +97,14 @@ namespace Multi_Account_Synchronizer
                 throw new ArgumentException("Invalid data length for the given width and height");
             }
 
-            int[][] resultArray = new int[height][];
+            int[][] resultArray = new int[width][]; 
 
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < width; i++)
             {
-                resultArray[i] = new int[width]; // Initialize each row
-                for (int j = 0; j < width; j++)
+                resultArray[i] = new int[height]; 
+                for (int j = 0; j < height; j++)
                 {
-                    int index = i * width + j;
+                    int index = j * width + i; 
                     resultArray[i][j] = data[index] != 0 ? 0 : 1;
                 }
             }

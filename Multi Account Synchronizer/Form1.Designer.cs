@@ -32,12 +32,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.roundedButton4 = new Multi_Account_Synchronizer.RoundedButton();
+            this.roundedButton5 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton3 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
+            this.roundedButton4 = new Multi_Account_Synchronizer.RoundedButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tryingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -60,15 +64,17 @@
             // 
             this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel2.ColumnCount = 4;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.Controls.Add(this.roundedButton4, 3, 0);
+            this.tableLayoutPanel2.ColumnCount = 5;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.Controls.Add(this.roundedButton5, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton3, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton2, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.roundedButton4, 4, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 158);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -76,28 +82,28 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(452, 34);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
-            // roundedButton4
+            // roundedButton5
             // 
-            this.roundedButton4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.roundedButton5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.roundedButton4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton4.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton4.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.roundedButton4.BorderRadius = 10;
-            this.roundedButton4.BorderSize = 0;
-            this.roundedButton4.FlatAppearance.BorderSize = 0;
-            this.roundedButton4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
-            this.roundedButton4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
-            this.roundedButton4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundedButton4.ForeColor = System.Drawing.Color.White;
-            this.roundedButton4.Location = new System.Drawing.Point(342, 3);
-            this.roundedButton4.Name = "roundedButton4";
-            this.roundedButton4.Size = new System.Drawing.Size(107, 28);
-            this.roundedButton4.TabIndex = 3;
-            this.roundedButton4.Text = "Save settings";
-            this.roundedButton4.TextColor = System.Drawing.Color.White;
-            this.roundedButton4.UseVisualStyleBackColor = false;
-            this.roundedButton4.Click += new System.EventHandler(this.roundedButton4_Click);
+            this.roundedButton5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton5.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton5.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundedButton5.BorderRadius = 10;
+            this.roundedButton5.BorderSize = 0;
+            this.roundedButton5.FlatAppearance.BorderSize = 0;
+            this.roundedButton5.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
+            this.roundedButton5.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
+            this.roundedButton5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundedButton5.ForeColor = System.Drawing.Color.White;
+            this.roundedButton5.Location = new System.Drawing.Point(273, 3);
+            this.roundedButton5.Name = "roundedButton5";
+            this.roundedButton5.Size = new System.Drawing.Size(84, 28);
+            this.roundedButton5.TabIndex = 4;
+            this.roundedButton5.Text = "Settings";
+            this.roundedButton5.TextColor = System.Drawing.Color.White;
+            this.roundedButton5.UseVisualStyleBackColor = false;
+            this.roundedButton5.Click += new System.EventHandler(this.roundedButton5_Click);
             // 
             // roundedButton3
             // 
@@ -113,9 +119,9 @@
             this.roundedButton3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
             this.roundedButton3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.roundedButton3.ForeColor = System.Drawing.Color.White;
-            this.roundedButton3.Location = new System.Drawing.Point(229, 3);
+            this.roundedButton3.Location = new System.Drawing.Point(183, 3);
             this.roundedButton3.Name = "roundedButton3";
-            this.roundedButton3.Size = new System.Drawing.Size(107, 28);
+            this.roundedButton3.Size = new System.Drawing.Size(84, 28);
             this.roundedButton3.TabIndex = 2;
             this.roundedButton3.Text = "Add account";
             this.roundedButton3.TextColor = System.Drawing.Color.White;
@@ -136,9 +142,9 @@
             this.roundedButton2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
             this.roundedButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.roundedButton2.ForeColor = System.Drawing.Color.White;
-            this.roundedButton2.Location = new System.Drawing.Point(116, 3);
+            this.roundedButton2.Location = new System.Drawing.Point(93, 3);
             this.roundedButton2.Name = "roundedButton2";
-            this.roundedButton2.Size = new System.Drawing.Size(107, 28);
+            this.roundedButton2.Size = new System.Drawing.Size(84, 28);
             this.roundedButton2.TabIndex = 1;
             this.roundedButton2.Text = "Stop bot";
             this.roundedButton2.TextColor = System.Drawing.Color.White;
@@ -161,16 +167,54 @@
             this.roundedButton1.ForeColor = System.Drawing.Color.White;
             this.roundedButton1.Location = new System.Drawing.Point(3, 3);
             this.roundedButton1.Name = "roundedButton1";
-            this.roundedButton1.Size = new System.Drawing.Size(107, 28);
+            this.roundedButton1.Size = new System.Drawing.Size(84, 28);
             this.roundedButton1.TabIndex = 0;
             this.roundedButton1.Text = "Start bot";
             this.roundedButton1.TextColor = System.Drawing.Color.White;
             this.roundedButton1.UseVisualStyleBackColor = false;
             this.roundedButton1.Click += new System.EventHandler(this.roundedButton1_Click);
             // 
+            // roundedButton4
+            // 
+            this.roundedButton4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.roundedButton4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton4.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton4.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundedButton4.BorderRadius = 10;
+            this.roundedButton4.BorderSize = 0;
+            this.roundedButton4.FlatAppearance.BorderSize = 0;
+            this.roundedButton4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
+            this.roundedButton4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
+            this.roundedButton4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundedButton4.ForeColor = System.Drawing.Color.White;
+            this.roundedButton4.Location = new System.Drawing.Point(363, 3);
+            this.roundedButton4.Name = "roundedButton4";
+            this.roundedButton4.Size = new System.Drawing.Size(86, 28);
+            this.roundedButton4.TabIndex = 3;
+            this.roundedButton4.Text = "Save settings";
+            this.roundedButton4.TextColor = System.Drawing.Color.White;
+            this.roundedButton4.UseVisualStyleBackColor = false;
+            this.roundedButton4.Click += new System.EventHandler(this.roundedButton4_Click);
+            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tryingToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(106, 26);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // tryingToolStripMenuItem
+            // 
+            this.tryingToolStripMenuItem.Name = "tryingToolStripMenuItem";
+            this.tryingToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.tryingToolStripMenuItem.Text = "trying";
+            this.tryingToolStripMenuItem.Click += new System.EventHandler(this.tryingToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -178,6 +222,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(476, 204);
+            this.ContextMenuStrip = this.contextMenuStrip1;
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
             this.ForeColor = System.Drawing.Color.White;
@@ -186,6 +231,7 @@
             this.Text = "Multi Account Synchronizer";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -199,6 +245,9 @@
         private RoundedButton roundedButton3;
         private RoundedButton roundedButton4;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem tryingToolStripMenuItem;
+        private RoundedButton roundedButton5;
     }
 }
 
