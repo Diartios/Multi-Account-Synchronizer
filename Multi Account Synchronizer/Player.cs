@@ -9,16 +9,6 @@ using System.Windows.Forms;
 
 namespace Multi_Account_Synchronizer
 {
-    internal class Pet
-    {
-        public int x = -1;
-        public int y = -1;
-        public int id = -1;
-        public Dictionary<int, bool> skills = new Dictionary<int, bool>
-        {
-            { 1627, true },
-        };
-    }
     internal class Player : IDisposable
     {
         public int x = -1;
@@ -35,13 +25,14 @@ namespace Multi_Account_Synchronizer
         public bool updated = false;
         public bool NormalFlower = false;
         public bool StrongFlower = false;
+        public bool Dancing = false;
         public Stopwatch FlowerSW = new Stopwatch();
         public class Item
         {
-            public string name { get; set; }
-            public int vnum { get; set; }
-            public int quantity { get; set; }
-            public int pos { get; set; }
+            public string Name { get; set; }
+            public int Vnum { get; set; }
+            public int Quantity { get; set; }
+            public int Pos { get; set; }
             public int Type { get; set; }
         }
         public void handle_skills(string info)
@@ -63,17 +54,17 @@ namespace Multi_Account_Synchronizer
             Inventory.Clear();
             foreach (var item in inventory["inventory"]["equip"])
             {
-                Item i = new Item { name = item["name"].ToString(), pos = ((int)item["position"]), quantity = ((int)item["quantity"]), vnum = ((int)item["vnum"]), Type = 0 };
+                Item i = new Item { Name = item["name"].ToString(), Pos = ((int)item["position"]), Quantity = ((int)item["quantity"]), Vnum = ((int)item["vnum"]), Type = 0 };
                 Inventory.Add(i);
             }
             foreach (var item in inventory["inventory"]["main"])
             {
-                Item i = new Item { name = item["name"].ToString(), pos = ((int)item["position"]), quantity = ((int)item["quantity"]), vnum = ((int)item["vnum"]), Type = 1 };
+                Item i = new Item { Name = item["name"].ToString(), Pos = ((int)item["position"]), Quantity = ((int)item["quantity"]), Vnum = ((int)item["vnum"]), Type = 1 };
                 Inventory.Add(i);
             }
             foreach (var item in inventory["inventory"]["etc"])
             {
-                Item i = new Item { name = item["name"].ToString(), pos = ((int)item["position"]), quantity = ((int)item["quantity"]), vnum = ((int)item["vnum"]), Type = 2 };
+                Item i = new Item { Name = item["name"].ToString(), Pos = ((int)item["position"]), Quantity = ((int)item["quantity"]), Vnum = ((int)item["vnum"]), Type = 2 };
                 Inventory.Add(i);
             }
             updated = true;
@@ -185,6 +176,7 @@ namespace Multi_Account_Synchronizer
         public void handle_walk(List<string> packet_splitted, string full_packet)
         {
             if (packet_splitted.Count() < 3) return;
+            Dancing = false;
             try
             {
                 x = int.Parse(packet_splitted[1]);
@@ -215,6 +207,14 @@ namespace Multi_Account_Synchronizer
 
         public void handle_guri(List<string> packet_splitted, string full_packet)
         {
+            if (packet_splitted.Count() < 5)
+                return;
+            if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "0")
+                Dancing = true;
+            else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "-1")
+                Dancing = false;
+            else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "100")
+                Dancing = false;
             if (packet_splitted.Count() < 9)
                 return;
             try

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
@@ -31,7 +32,7 @@ namespace Multi_Account_Synchronizer
                     if (distance < maxdistance)
                     {
                         maxdistance = distance;
-                        mob_id = entity.id;
+                        mob_id = entity.Id;
                     }
                 }
             }
@@ -53,9 +54,9 @@ namespace Multi_Account_Synchronizer
                 List<Entities> ids = new List<Entities>();
                 foreach (Entities entity in EntityData.Values)
                 {
-                    if (blacklist && monsters.Contains(entity.vnum))
+                    if (blacklist && monsters.Contains(entity.Vnum))
                         continue;
-                    if (whitelist && !monsters.Contains(entity.vnum))
+                    if (whitelist && !monsters.Contains(entity.Vnum))
                         continue;
                     if (Statics.Distance(new Point(player.x, player.y), entity.Pos) > radius)
                         continue;
@@ -67,11 +68,11 @@ namespace Multi_Account_Synchronizer
                 int y = ids.Sum(t => t.Pos.Y);
                 double totalx = Convert.ToDouble(x) / Convert.ToDouble(ids.Count);
                 double totaly = Convert.ToDouble(y) / Convert.ToDouble(ids.Count);
-                mobid = ids[0].id;
+                mobid = ids[0].Id;
                 int vnum = -1;
                 foreach (Entities entity in ids)
                 {
-                    int indexnew = monsters.IndexOf(entity.vnum);
+                    int indexnew = monsters.IndexOf(entity.Vnum);
                     int indexold = monsters.IndexOf(vnum);
                     
                     
@@ -79,18 +80,18 @@ namespace Multi_Account_Synchronizer
                     if ((indexnew < indexold || indexold == -1) && priority)
                     {
                         maxdistance = distance;
-                        mobid = entity.id;
-                        vnum = entity.vnum;
+                        mobid = entity.Id;
+                        vnum = entity.Vnum;
                     }
                     else if (indexnew == indexold && priority && distance < maxdistance)
                     {
                         maxdistance = distance;
-                        mobid = entity.id;
+                        mobid = entity.Id;
                     }
                     else if (distance < maxdistance && !priority)
                     {
                         maxdistance = distance;
-                        mobid = entity.id;
+                        mobid = entity.Id;
                     }
                 }
                 return mobid;
@@ -115,11 +116,11 @@ namespace Multi_Account_Synchronizer
             {
                 if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > radius)
                     continue;
-                if (blacklist && lootlist.Contains(loot.vnum))
+                if (blacklist && lootlist.Contains(loot.Vnum))
                     continue;
-                if (whitelist && !lootlist.Contains(loot.vnum))
+                if (whitelist && !lootlist.Contains(loot.Vnum))
                     continue;
-                if (loot.vnum == 1086 && ignoreflowers)
+                if (loot.Vnum == 1086 && ignoreflowers)
                     continue;
                 if (!owners.Contains(loot.Owner))
                     continue;
@@ -132,23 +133,6 @@ namespace Multi_Account_Synchronizer
 
             }
             return resultloot;
-        }
-        public void handle_map_entities(string entities)
-        {
-            JObject MapEntities = JObject.Parse(entities);
-            LootData.Clear();
-            foreach (var item in MapEntities["items"])
-            {
-                int id = ((int)item["id"]);
-                int vnum = ((int)item["vnum"]);
-                int x = ((int)item["x"]);
-                int y = ((int)item["y"]);
-                int quantity = ((int)item["quantity"]);
-                int owner_id = ((int)item["owner_id"]);
-                string name = item["name"].ToString();
-                //LootData.Add(id, new Loot { id = id, name = name, owner_id = owner_id, Pos = new Point(x, y), quantity = quantity, vnum = vnum });
-            }
-            updated = true;
         }
         public void handle_packets(List<string> packet_splitted, string full_packet)
         {
@@ -242,7 +226,7 @@ namespace Multi_Account_Synchronizer
 
                 if (type == 3 && isdead == 0 && EntityData.ContainsKey(id))
                 {
-                    if (EntityData[id].vnum == 1500)
+                    if (EntityData[id].Vnum == 1500)
                         Console.WriteLine($"removed mob with vnum 1500 {full_packet}");
                     EntityData.Remove(id);
                 }
@@ -254,7 +238,7 @@ namespace Multi_Account_Synchronizer
                 if (packet_splitted[1] == "3" && type == 1 && id == player.id)
                 {
                     int attackerid = int.Parse(packet_splitted[2]);
-                    Entities entities = new Entities { id = attackerid, LastAttack = DateTime.Now };
+                    Entities entities = new Entities { Id = attackerid, LastAttack = DateTime.Now };
                     LastAttacks[attackerid] = entities; 
                     
                 }
@@ -292,7 +276,7 @@ namespace Multi_Account_Synchronizer
                 EntityData[id].Pos = new Point(x, y);
             }
             else if (!EntityData.ContainsKey(id) && type == 3)
-                EntityData.Add(id, new Entities { id = id, Pos = new Point(x, y) });
+                EntityData.Add(id, new Entities { Id = id, Pos = new Point(x, y) });
         }
 
         public void handle_at(List<string> packet_splitted, string full_packet)
@@ -351,21 +335,29 @@ namespace Multi_Account_Synchronizer
             {
                 if (vnum == 2104)
                     return;
-                EntityData[id] = new Entities { id = id, Pos = new Point(x, y), vnum = vnum };
+                EntityData[id] = new Entities { Id = id, Pos = new Point(x, y), Vnum = vnum };
+            }
+            if (type == 9)
+            {
+                int quantity = int.Parse(packet_splitted[6]);
+                int owner = int.Parse(packet_splitted[9]);
+                Point position = new Point(x, y);
+                Loot loot = new Loot(vnum, id, position, quantity, owner, DateTime.Now);
+                LootData[id] = loot;
             }
         }
 
         public class Entities
         {
-            public int id { get; set; }
+            public int Id { get; set; }
             public Point Pos { get; set; }
-            public int vnum { get; set; }
+            public int Vnum { get; set; }
             public DateTime LastAttack { get; set; }
         }
 
         public class Drops
         {
-            public int id { get; set; }
+            public int Id { get; set; }
             public Point Pos { get; set; }
         }
     }

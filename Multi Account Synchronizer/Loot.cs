@@ -9,8 +9,8 @@ namespace Multi_Account_Synchronizer
 {
     internal class Loot
     {
-        public int vnum;
-        public int id;
+        public int Vnum;
+        public int Id;
         public Point Pos;
         public int Quantity;
         public int Owner;
@@ -18,8 +18,8 @@ namespace Multi_Account_Synchronizer
 
         public Loot(int vnum, int id, Point pos, int quantity, int owner, DateTime time)
         {
-            this.vnum = vnum;
-            this.id = id;
+            this.Vnum = vnum;
+            this.Id = id;
             this.Pos = pos;
             this.Quantity = quantity;
             this.Owner = owner;

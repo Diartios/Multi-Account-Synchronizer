@@ -405,8 +405,8 @@
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.ComboBox comboBox1;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private RoundedButton roundedButton1;
-        private RoundedButton roundedButton2;
-        private RoundedButton roundedButton3;
+        public RoundedButton roundedButton1;
+        public RoundedButton roundedButton2;
+        public RoundedButton roundedButton3;
     }
 }
