@@ -59,12 +59,13 @@ namespace Multi_Account_Synchronizer
                 }
                 else
                     this.Close();
+                
+                CheckPorts();
                 timer1.Start();
                 foreach (RoundedButton button in tableLayoutPanel2.Controls.OfType<RoundedButton>())
                 {
                     button.Enabled = true;
                 }
-                CheckPorts();
             }
             catch (Exception a)
             {
@@ -167,7 +168,6 @@ namespace Multi_Account_Synchronizer
                 int index = tableLayoutPanel1.GetRow(c);
                 if (index >= tableLayoutPanel1.RowStyles.Count)
                 {
-                    Console.WriteLine(tableLayoutPanel1.RowStyles.Count);
                     controls.Add(c);
                 }
             }
@@ -277,7 +277,7 @@ namespace Multi_Account_Synchronizer
             if (!File.Exists("Members.json"))
                 return;
 
-            while (player.id <= 0)
+            while (player.id <= 0 || player.name == "")
                 await Task.Delay(100);
             bot.random = new Random(player.id);
             JObject Members = new JObject();
@@ -298,7 +298,12 @@ namespace Multi_Account_Synchronizer
             int useamuletmin = Statics.JsonGetValueOrDefault(Members["Delays"], "Use Amulet Min", 750);
             int useamuletmax = Statics.JsonGetValueOrDefault(Members["Delays"], "Use Amulet Max", 1450);
             int attackluremin = Statics.JsonGetValueOrDefault(Members["Delays"], "Attack Lure Min", 1500);
-            int attackluremax = Statics.JsonGetValueOrDefault(Members["Delays"], "Attack Lure Max", 1500);
+            int attackluremax = Statics.JsonGetValueOrDefault(Members["Delays"], "Attack Lure Max", 2100);
+            string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
+            if (inviteCommand != "" && !Statics.InviteCommands.ContainsKey(inviteCommand))
+            {
+                inviteCommand = "";
+            }
             Tuple<int,int> invite = new Tuple<int,int>(invitemin, invitemax);
             Tuple<int, int> exit = new Tuple<int, int>(exitmin, exitmax);
             Tuple<int, int> amulet = new Tuple<int, int>(useamuletmin, useamuletmax);
@@ -307,6 +312,7 @@ namespace Multi_Account_Synchronizer
             bot.MinilandExitDelay = exit;
             bot.AmuletUseDelay = amulet;
             bot.StartAttackDelay = attack;
+            bot.InviteCommand = inviteCommand;
             foreach (var member in Members["Members"])
             {
 
@@ -318,9 +324,14 @@ namespace Multi_Account_Synchronizer
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
-                        b.textBox2.Text = path;
-                        bot.ReadIni(path);
-                        bot.CreateNewIni(path);
+                        var result = MessageBox.Show($"Profile {path} found in settings for {player.name} do you want to load it?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (result == DialogResult.Yes)
+                        {
+                            b.textBox2.Text = path;
+                            bot.ReadIni(path);
+                            bot.CreateNewIni(path);
+                        }
+                       
                     }
                     foreach (var item in member["buffs"])
                     {
@@ -336,9 +347,34 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
+            if (apis.Count(y => y.Item5.InviteCommand == "") > 0)
+            {
+                var allinvites = Statics.InviteCommands.ToList();
+                string allinvitestext = "";
+                foreach (var invite in allinvites)
+                {
+                    allinvitestext += $"{invite.Value}={invite.Key}, ";
+                }
+                allinvitestext = allinvitestext.Remove(allinvitestext.Length - 2);
+                MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}");
+                return;
+            }
+            else if (apis.Count > 0 && apis.Count(x => x.Item5.run) == 0)
+            {
+                var api = apis.FirstOrDefault();
+                if (api == null)
+                    return;
+                var result = MessageBox.Show($"Miniland invite command is '{api.Item5.InviteCommand}' are you sure about starting the bot?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    return;
+            }
             apis.ForEach(x => {
                 if (!x.Item5.run)
+                {
+                    
                     x.Item5.AddLog("Bot started", "Information");
+                }
+                    
                 x.Item5.run = true;
                 x.Item1.start_bot();
             });
@@ -384,16 +420,17 @@ namespace Multi_Account_Synchronizer
             var a = apis.FirstOrDefault();
             JObject content = new JObject();
             JArray players = new JArray();
-            JObject delays = new JObject();
-            delays.Add("Accept Invite Min", a.Item5.AcceptInviteDelay.Item1);
-            delays.Add("Accept Invite Max", a.Item5.AcceptInviteDelay.Item2);
-            delays.Add("Exit Miniland Min", a.Item5.MinilandExitDelay.Item1);
-            delays.Add("Exit Miniland Max", a.Item5.MinilandExitDelay.Item2);
-            delays.Add("Use Amulet Min", a.Item5.AmuletUseDelay.Item1);
-            delays.Add("Use Amulet Max", a.Item5.AmuletUseDelay.Item2);
-            delays.Add("Attack Lure Min", a.Item5.StartAttackDelay.Item1);
-            delays.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
-            content["Delays"] = delays;
+            JObject generalSettings = new JObject();
+            generalSettings.Add("Accept Invite Min", a.Item5.AcceptInviteDelay.Item1);
+            generalSettings.Add("Accept Invite Max", a.Item5.AcceptInviteDelay.Item2);
+            generalSettings.Add("Exit Miniland Min", a.Item5.MinilandExitDelay.Item1);
+            generalSettings.Add("Exit Miniland Max", a.Item5.MinilandExitDelay.Item2);
+            generalSettings.Add("Use Amulet Min", a.Item5.AmuletUseDelay.Item1);
+            generalSettings.Add("Use Amulet Max", a.Item5.AmuletUseDelay.Item2);
+            generalSettings.Add("Attack Lure Min", a.Item5.StartAttackDelay.Item1);
+            generalSettings.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
+            generalSettings.Add("Invite Command", a.Item5.InviteCommand);
+            content["General Settings"] = generalSettings;
             foreach (var api in apis)
             {
                 JArray buffs = new JArray();
@@ -421,7 +458,7 @@ namespace Multi_Account_Synchronizer
             MessageBox.Show("Settings saved!", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             if (apis.Count <= 0)
                 return;
@@ -435,6 +472,10 @@ namespace Multi_Account_Synchronizer
 
             if (MinilandOwner != null)
             {
+                MinilandOwner.Item3.updated = false;
+                MinilandOwner.Item1.query_inventory();
+                while (!MinilandOwner.Item3.updated)
+                    await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
                 MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS).Select(x => x.Item3.name).ToList();
                 timetobuff = apis.Count(x => x.Item3.map_id == 20001) == apis.Count();
@@ -460,6 +501,14 @@ namespace Multi_Account_Synchronizer
             if (defencemobs.Count(x => x > 0) > 0)
                 defencemob = defencemobs.Where(x => x > 0).FirstOrDefault();
 
+            int samekeydelay = 200;
+            int differentkeydelay = 2000;
+            var a = apis.Where(x => x.Item5.DelaySameKey != 200 || x.Item5.DelayDifferentKey != 2000).FirstOrDefault();
+            if (a != null)
+            {
+                samekeydelay = a.Item5.DelaySameKey;
+                differentkeydelay = a.Item5.DelayDifferentKey;
+            }
             foreach ( var api in apis )
             {
                 api.Item5.DefenceMob = defencemob;
@@ -471,6 +520,8 @@ namespace Multi_Account_Synchronizer
                 api.Item5.LureMob = luremob;
                 api.Item5.StartAttack = startkill;
                 api.Item5.OwnerName = minilandownernick;
+                api.Item5.DelayDifferentKey = differentkeydelay;
+                api.Item5.DelaySameKey = samekeydelay;
                 if (reset)
                 {
                     api.Item5.Minilandsw.Restart();
@@ -483,18 +534,6 @@ namespace Multi_Account_Synchronizer
                     
                 }
             }
-        }
-
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void tryingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var map = Statics.LoadMap(1);
-            Console.WriteLine(map.ToString());
-            
         }
 
         private void roundedButton5_Click(object sender, EventArgs e)

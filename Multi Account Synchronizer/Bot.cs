@@ -51,12 +51,16 @@ namespace Multi_Account_Synchronizer
         public bool DPS = false;
         public bool Buffer = true;
         public bool MinilandOwner = false;
+        public string InviteCommand = "";
 
         public bool NeedHelp = false;
         public bool HelpAmulet = false;
         public int HelpNeededMobId = -1;
         public int DefenceMob = -1;
         
+
+
+
 
         int[][] CurrentMap = Statics.LoadMap(-1);
         int LastLoadedMap = -1;
@@ -98,6 +102,8 @@ namespace Multi_Account_Synchronizer
         public int IgnoreTargetValue = 10;
         public bool KeepDistance = false;
         public int KeepDistanceValue = 0;
+        public bool Stay = true;
+        public bool Move = false;
         #endregion
 
         #region Loot Variables
@@ -241,6 +247,7 @@ namespace Multi_Account_Synchronizer
                     int i = 0;
                     while (i < Path.Count && run)
                     {
+                        await Task.Delay(1);
                         if (i == 0 && Minilandsw.Elapsed.TotalSeconds == 0 && MiniEnabled || i == 0 && Minilandsw.Elapsed.TotalSeconds > MinilandInterval && MiniEnabled)
                         {
                             UpdateBuff = true;
@@ -256,6 +263,10 @@ namespace Multi_Account_Synchronizer
                                 await MinilandDPS();
                             }
                             
+                        }
+                        if (i == 0)
+                        {
+                            await Task.Delay(random.Next(600, 1400));
                         }
                         //wait respawn
                         while (WaitRespawn && scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) < 0 && run)
@@ -367,6 +378,20 @@ namespace Multi_Account_Synchronizer
                 return;
             }
         }
+        private void CheckSelfDefenceMobs()
+        {
+            List<int> MobsToDelete = new List<int>();
+            foreach (var entity in scene.LastAttacks.Values)
+            {
+                if (!scene.EntityData.ContainsKey(entity.Id) || (DateTime.Now - entity.LastAttack).TotalSeconds > 10.0)
+                    MobsToDelete.Add(entity.Id);
+            }
+            foreach (int id in MobsToDelete)
+            {
+                if (scene.LastAttacks.ContainsKey(id))
+                    scene.LastAttacks.Remove(id);
+            }
+        }
         private async Task Amulet()
         {
             if (!run)
@@ -386,6 +411,9 @@ namespace Multi_Account_Synchronizer
             }
             map_changed = false;
             await Task.Delay(DelayGenerator(AmuletUseDelay));
+            CheckSelfDefenceMobs();
+            if (scene.LastAttacks.Count > 0)
+                await SelfDefence();
             while (!map_changed && run)
             {
                 AddLog("Trying to use amulet", "Amulet");
@@ -394,8 +422,13 @@ namespace Multi_Account_Synchronizer
                 phoenixapi.send_packet($"#u_i^1^{player.id}^2^{item.Pos}^1");
                 for (int i = 0; i < 90; i++)
                 {
-                    if (HelpAmulet || map_changed || scene.LastAttacks.Count > 0 || !run || i > 10 && !player.Dancing)
+                    if (HelpAmulet || map_changed || scene.LastAttacks.Count > 0 || !run)
                         break;
+                    if (i > 10 && !player.Dancing)
+                    {
+                        AddLog("Player is not dancing", "Amulet");
+                        break;
+                    }
                     await Task.Delay(100);
                 }
                 if (!run)
@@ -405,14 +438,17 @@ namespace Multi_Account_Synchronizer
                 }
                 else if (map_changed)
                 {
+                    AddLog("Used Amulet", "Amulet");
                     continue;
                 }
                 else if (HelpAmulet)
                 {
+                    AddLog("Going to help", "Amulet");
                     await GoHelp();
                 }
                 else if (scene.LastAttacks.Count > 0)
                 {
+                    AddLog("Self Defence", "Amulet");
                     await SelfDefence();
                 }
                 await Task.Delay(random.Next(1000, 1450));
@@ -440,7 +476,7 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            await Task.Delay(random.Next(1000, 1750));
+            await Task.Delay(random.Next(350, 750));
             AddLog("Started looting", "Loot");
             
             bool ignoreflower = true;
@@ -452,7 +488,7 @@ namespace Multi_Account_Synchronizer
             {
                 ignoreflower = false;
             }
-            else if (player.FlowerSW.Elapsed.Minutes > 7 && player.NormalFlower)
+            else if (player.FlowerSW.Elapsed.Minutes >= 7 && player.NormalFlower)
             {
                 ignoreflower = false;
             }
@@ -625,8 +661,10 @@ namespace Multi_Account_Synchronizer
                 return;
             foreach (string account in DPSAccounts)
             {
+                if (InviteCommand == "")
+                    return;
                 AddLog($"Inviting account with name {account}", "Miniland Master");
-                phoenixapi.send_packet($"$Invite {account}");
+                phoenixapi.send_packet($"${InviteCommand} {account}");
                 await Task.Delay(1000);
             }
             while (!StartBuff && run)
@@ -746,7 +784,7 @@ namespace Multi_Account_Synchronizer
 
             #region Miniland
             MiniEnabled = Statics.IniGetValueOrDefault(data, "Miniland", "enabled", true);
-            MinilandInterval = Statics.IniGetValueOrDefault(data, "Miniland", "delay", 300);
+                MinilandInterval = Statics.IniGetValueOrDefault(data, "Miniland", "delay", 300);
             DelaySameKey = Statics.IniGetValueOrDefault(data, "Miniland", "same_key_delay", 200);
             DelayDifferentKey = Statics.IniGetValueOrDefault(data, "Miniland", "diff_key_delay", 2000);
             #endregion
@@ -785,13 +823,18 @@ namespace Multi_Account_Synchronizer
 
             data["Walking"]["path\\size"] = "0";
 
-            data["Minland"]["enabled"] = "false";
+            data["Miniland"]["enabled"] = "false";
 
             string newpath = path.Replace(".ini", "");
             newpath = $"{newpath} Sync.ini";
             if (File.Exists(newpath))
                 File.Delete(newpath);
             File.WriteAllText(newpath, data.ToString());
+            Stopwatch sw = Stopwatch.StartNew();
+            while (!File.Exists(newpath) && sw.Elapsed.TotalSeconds < 5)
+                await Task.Delay(500);
+            if (!File.Exists(newpath))
+                return;
             phoenixapi.load_settings(newpath);
             await Task.Delay(10 * 1000);
             File.Delete(newpath);
@@ -842,7 +885,9 @@ namespace Multi_Account_Synchronizer
                 var entity = scene.EntityData.Values.Where(ent => ent.Id == mobid).FirstOrDefault();
                 if (entity == null)
                 {
-                    return;
+                    x = player.x + random.Next(-1, 2);
+                    y = player.y + random.Next(-1, 2);
+                    phoenixapi.player_walk(x, y);
                 }
                 else
                 {
@@ -854,7 +899,12 @@ namespace Multi_Account_Synchronizer
                     x = player.x + cosx;
                     y = player.y + sinx;
                     if (Statics.Distance(new Point(player.x, player.y), entity.Pos) >= KeepDistanceValue)
-                        return;
+                    {
+                        if (Stay)
+                            return;
+                        x = player.x + random.Next(-1,2);
+                        y = player.y + random.Next(-1,2);
+                    }
 
                     phoenixapi.player_walk(x, y);
                 }
@@ -896,6 +946,7 @@ namespace Multi_Account_Synchronizer
             if (!Maps.Contains(id))
             {
                 run = false;
+                AddLog("Bot stopped due to map change security", "Security");
                 Stop();
             }
         }

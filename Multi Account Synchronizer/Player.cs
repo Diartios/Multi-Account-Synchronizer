@@ -191,7 +191,7 @@ namespace Multi_Account_Synchronizer
         public void handle_at(List<string> packet_splitted, string full_packet)
         {
             if (packet_splitted.Count() < 5) return;
-
+            Dancing = false;
             try
             {
                 id = int.Parse(packet_splitted[1]);
@@ -212,8 +212,6 @@ namespace Multi_Account_Synchronizer
             if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "0")
                 Dancing = true;
             else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "-1")
-                Dancing = false;
-            else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "100")
                 Dancing = false;
             if (packet_splitted.Count() < 9)
                 return;

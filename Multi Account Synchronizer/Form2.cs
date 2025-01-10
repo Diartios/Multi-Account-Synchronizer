@@ -46,7 +46,7 @@ namespace Multi_Account_Synchronizer
                 PortsComboBox.SelectedIndex = 0;
         }
 
-        private async void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             if (PortsComboBox.Text == "" || PortsComboBox.Text == null)
                 return;

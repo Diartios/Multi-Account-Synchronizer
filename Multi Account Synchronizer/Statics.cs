@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
@@ -15,6 +16,14 @@ namespace Multi_Account_Synchronizer
 {
     internal class Statics
     {
+        public static Dictionary<string,string> InviteCommands = new Dictionary<string, string>()
+        {
+            {"Invite", "EN-ES-CZ-PL" },
+            {"Einladung","DE" },
+            {"Inviter", "FR" },
+            {"Davet", "TR" },
+            {"InvM", "IT" }
+        };
         public static T JsonGetValueOrDefault<T>(JToken jsonObject, string key, T defaultValue)
         {
             if (jsonObject == null)
@@ -34,7 +43,16 @@ namespace Multi_Account_Synchronizer
         {
             try
             {
-                return (T)Convert.ChangeType(iniData[sectionName][keyName], typeof(T));
+
+                string value = iniData[sectionName][keyName];
+                //in case decimal symbol is not "." 
+                if (typeof(T) == typeof(double) && CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == ",")
+                {
+                   
+                    value = value.Replace(".", ",");
+                }
+                var resultValue = (T)Convert.ChangeType(value, typeof(T));
+                return resultValue;
             }
             catch(Exception e)
             {
