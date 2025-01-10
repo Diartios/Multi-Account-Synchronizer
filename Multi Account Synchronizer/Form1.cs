@@ -291,14 +291,14 @@ namespace Multi_Account_Synchronizer
                 string json = file.ReadToEnd();
                 Members = JObject.Parse(json);
             }
-            int invitemin = Statics.JsonGetValueOrDefault(Members["Delays"], "Accept Invite Min", 1000);
-            int invitemax = Statics.JsonGetValueOrDefault(Members["Delays"], "Accept Invite Max", 2000);
-            int exitmin = Statics.JsonGetValueOrDefault(Members["Delays"], "Exit Miniland Min", 750);
-            int exitmax = Statics.JsonGetValueOrDefault(Members["Delays"], "Exit Miniland Max", 2000);
-            int useamuletmin = Statics.JsonGetValueOrDefault(Members["Delays"], "Use Amulet Min", 750);
-            int useamuletmax = Statics.JsonGetValueOrDefault(Members["Delays"], "Use Amulet Max", 1450);
-            int attackluremin = Statics.JsonGetValueOrDefault(Members["Delays"], "Attack Lure Min", 1500);
-            int attackluremax = Statics.JsonGetValueOrDefault(Members["Delays"], "Attack Lure Max", 2100);
+            int invitemin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Accept Invite Min", 1000);
+            int invitemax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Accept Invite Max", 2000);
+            int exitmin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Exit Miniland Min", 750);
+            int exitmax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Exit Miniland Max", 2000);
+            int useamuletmin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Use Amulet Min", 750);
+            int useamuletmax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Use Amulet Max", 1450);
+            int attackluremin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Min", 1500);
+            int attackluremax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Max", 2100);
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
             if (inviteCommand != "" && !Statics.InviteCommands.ContainsKey(inviteCommand))
             {
@@ -347,6 +347,10 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
+            int killpointcount = -1;
+            var ab = apis.Where(x => x.Item5.DPS && x.Item5.Path.Count(y => y.Kill) > 0).FirstOrDefault();
+            if (ab != null)
+                killpointcount = ab.Item5.Path.Count(y => y.Kill);
             if (apis.Count(y => y.Item5.InviteCommand == "") > 0)
             {
                 var allinvites = Statics.InviteCommands.ToList();
@@ -356,7 +360,48 @@ namespace Multi_Account_Synchronizer
                     allinvitestext += $"{invite.Value}={invite.Key}, ";
                 }
                 allinvitestext = allinvitestext.Remove(allinvitestext.Length - 2);
-                MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}");
+                MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}", "WARNING", MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                return;
+            }
+            else if (apis.Count(x => x.Item5.Path.Count(a => a.Kill) != killpointcount) > 0 && killpointcount != -1)
+            {
+                string points = "";
+                foreach (var item in apis.Where(x => x.Item5.DPS))
+                {
+                    if (!points.Contains(item.Item3.name))
+                        points += $"{item.Item3.name}:";
+                    List<WalkPoint> wpoints = item.Item5.Path.Where(x => x.Kill).ToList();
+                    foreach (WalkPoint p in wpoints)
+                    {
+                        points += $" X:{p.X} | Y:{p.Y},";
+                    }
+                    if (points.Last() == ',')
+                        points = points.Remove(points.Length - 1);
+                    points += "\n";
+                }
+                MessageBox.Show($"Kill point count is different on DPS accounts bot cannot work.\nCheck phoenix bot profiles. The kill points:\n{points}", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else if (apis.Count(x => x.Item5.DPS && x.Item5.AttackWhitelist && x.Item5.MonsterList.Count == 0) > 0)
+            {
+                string accs = "";
+                foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.AttackWhitelist && x.Item5.MonsterList.Count == 0))
+                {
+                    accs += $"{a.Item3.name}, ";
+                }
+                accs = accs.Remove(accs.Length - 2);
+                MessageBox.Show($"Accounts {accs} is on whitelist mode in combat and has 0 monsters in it. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            else if (apis.Count(x => x.Item5.DPS && x.Item5.Path.Count == 0) > 0)
+            {
+                string accs = "";
+                foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.Path.Count == 0))
+                {
+                    accs += $"{a.Item3.name}, ";
+                }
+                accs = accs.Remove(accs.Length - 2);
+                MessageBox.Show($"Accounts {accs} has 0 walking points in path. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else if (apis.Count > 0 && apis.Count(x => x.Item5.run) == 0)
@@ -368,6 +413,7 @@ namespace Multi_Account_Synchronizer
                 if (result == DialogResult.No)
                     return;
             }
+
             apis.ForEach(x => {
                 if (!x.Item5.run)
                 {
