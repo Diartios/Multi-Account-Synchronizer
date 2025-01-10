@@ -101,6 +101,7 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton3_Click(object sender, EventArgs e)
         {
+            MessageBox.Show("Choose the phoenix bot profile that you use and want to sync", "INFO",MessageBoxButtons.OK,MessageBoxIcon.Information);
             OpenFileDialog o = new OpenFileDialog();
             o.Title = "Open file";
             o.Filter = "INI files|*.ini";
@@ -110,6 +111,7 @@ namespace Multi_Account_Synchronizer
             textBox2.Text = o.FileName;
             bot.ReadIni(textBox2.Text);
             bot.CreateNewIni(textBox2.Text);
+            MessageBox.Show("The Phoenix Bot profile has changed with the edited one. You can make changes in attack, items, security but do not save your new Phoenix Bot settings", "CAUTION", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

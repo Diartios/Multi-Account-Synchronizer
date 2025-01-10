@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.MinilandInviteMax = new System.Windows.Forms.NumericUpDown();
             this.MinilandInviteMin = new System.Windows.Forms.NumericUpDown();
@@ -48,6 +49,9 @@
             this.UseAmuletMin = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.InviteCommandsComboBox = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMin)).BeginInit();
@@ -60,6 +64,7 @@
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMin)).BeginInit();
+            this.tableLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -366,17 +371,63 @@
             this.label8.TabIndex = 48;
             this.label8.Text = "~";
             // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.Controls.Add(this.InviteCommandsComboBox, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.label9, 0, 0);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(9, 151);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(336, 30);
+            this.tableLayoutPanel5.TabIndex = 4;
+            // 
+            // InviteCommandsComboBox
+            // 
+            this.InviteCommandsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.InviteCommandsComboBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.InviteCommandsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.InviteCommandsComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.InviteCommandsComboBox.ForeColor = System.Drawing.SystemColors.Window;
+            this.InviteCommandsComboBox.FormattingEnabled = true;
+            this.InviteCommandsComboBox.Items.AddRange(new object[] {
+            "Invite",
+            "Einladung",
+            "Inviter",
+            "Davet",
+            "InvM"});
+            this.InviteCommandsComboBox.Location = new System.Drawing.Point(171, 4);
+            this.InviteCommandsComboBox.Name = "InviteCommandsComboBox";
+            this.InviteCommandsComboBox.Size = new System.Drawing.Size(162, 21);
+            this.InviteCommandsComboBox.TabIndex = 7;
+            this.InviteCommandsComboBox.SelectedIndexChanged += new System.EventHandler(this.InviteCommandsComboBox_SelectedIndexChanged);
+            // 
+            // label9
+            // 
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(20, 8);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(128, 13);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "Miniland Invite Command:";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(359, 157);
+            this.ClientSize = new System.Drawing.Size(359, 192);
+            this.Controls.Add(this.tableLayoutPanel5);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel4);
             this.Controls.Add(this.tableLayoutPanel3);
             this.ForeColor = System.Drawing.Color.White;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Settings";
@@ -397,6 +448,8 @@
             this.tableLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMin)).EndInit();
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -423,5 +476,8 @@
         public System.Windows.Forms.NumericUpDown UseAmuletMin;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox InviteCommandsComboBox;
     }
 }
