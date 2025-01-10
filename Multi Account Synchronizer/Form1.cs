@@ -363,7 +363,7 @@ namespace Multi_Account_Synchronizer
                 MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}", "WARNING", MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 return;
             }
-            else if (apis.Count(x => x.Item5.Path.Count(a => a.Kill) != killpointcount) > 0 && killpointcount != -1)
+            else if (apis.Count(x => x.Item5.Path.Count(a => a.Kill) != killpointcount && x.Item5.DPS) > 0 && killpointcount != -1)
             {
                 string points = "";
                 foreach (var item in apis.Where(x => x.Item5.DPS))
@@ -376,10 +376,15 @@ namespace Multi_Account_Synchronizer
                         points += $" X:{p.X} | Y:{p.Y},";
                     }
                     if (points.Last() == ',')
+                    {
                         points = points.Remove(points.Length - 1);
+                        points += $" points count {item.Item5.Path.Count(x => x.Kill)}";
+                    }
+                        
+
                     points += "\n";
                 }
-                MessageBox.Show($"Kill point count is different on DPS accounts bot cannot work.\nCheck phoenix bot profiles. The kill points:\n{points}", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Kill point count is different on DPS accounts bot cannot work(original kill point count = {killpointcount}).\nCheck phoenix bot profiles. The kill points:\n{points}", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else if (apis.Count(x => x.Item5.DPS && x.Item5.AttackWhitelist && x.Item5.MonsterList.Count == 0) > 0)
