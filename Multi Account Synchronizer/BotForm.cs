@@ -113,5 +113,39 @@ namespace Multi_Account_Synchronizer
             bot.CreateNewIni(textBox2.Text);
             MessageBox.Show("The Phoenix Bot profile has changed with the edited one. You can make changes in attack, items, security but do not save your new Phoenix Bot settings", "CAUTION", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
+
+        private void OttercheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (OttercheckBox.Checked)
+            {
+                if (PandaCheckBox.Checked)
+                    PandaCheckBox.Checked = false;
+                if (!player.Pet.Skills.ContainsKey(663))
+                {
+                    player.Pet.Skills.Clear();
+                    player.Pet.Skills[663] = true;
+                }
+            }
+                
+            bot.Otter = OttercheckBox.Checked;
+        }
+
+        private void PandaCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (PandaCheckBox.Checked)
+            {
+                if (OttercheckBox.Checked)
+                    OttercheckBox.Checked = false;
+                if (!player.Pet.Skills.ContainsKey(1714))
+                {
+                    player.Pet.Skills.Clear();
+                    player.Pet.Skills[1714] = true;
+                }
+                
+                
+            }
+                
+            bot.Panda = PandaCheckBox.Checked;
+        }
     }
 }

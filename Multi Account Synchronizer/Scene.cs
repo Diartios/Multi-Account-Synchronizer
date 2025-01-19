@@ -134,6 +134,36 @@ namespace Multi_Account_Synchronizer
             }
             return resultloot;
         }
+        public List<Loot> GetLootList(bool blacklist, bool whitelist, bool ignoreflowers, bool my, bool group, bool neutral, List<int> lootlist, bool trashitems)
+        {
+            Random rnd = new Random();
+            List<Loot> resultList = new List<Loot>();
+            List<int> owners = new List<int>();
+            if (my)
+                owners.Add(player.id);
+            if (group)
+                owners.Add(-1);
+            if (neutral)
+                owners.Add(0);
+            foreach (Loot loot in LootData.Values)
+            {
+                int addchance = rnd.Next(0, 4);
+                if (!trashitems)
+                    addchance = 69;
+                if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > Math.Sqrt(2))
+                    continue;
+                if (blacklist && lootlist.Contains(loot.Vnum) && addchance != 0)
+                    continue;
+                if (whitelist && !lootlist.Contains(loot.Vnum) && addchance != 0)
+                    continue;
+                if (loot.Vnum == 1086 && ignoreflowers)
+                    continue;
+                if (!owners.Contains(loot.Owner))
+                    continue;
+                resultList.Add(loot);
+            }
+            return resultList;
+        }
         public void handle_packets(List<string> packet_splitted, string full_packet)
         {
             string header = packet_splitted[0];

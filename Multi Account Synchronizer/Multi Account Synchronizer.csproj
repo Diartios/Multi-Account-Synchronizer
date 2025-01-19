@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="JsonHandler.cs" />
     <Compile Include="Loot.cs" />
+    <Compile Include="Pet.cs" />
     <Compile Include="PhoenixApi\PhoenixApi.cs" />
     <Compile Include="PhoenixApi\PortFinder.cs" />
     <Compile Include="Player.cs" />

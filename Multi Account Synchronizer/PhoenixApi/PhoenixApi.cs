@@ -70,7 +70,7 @@ namespace Multi_Account_Synchronizer
             client.Close();
             clientz.Close();
         }
-        public void send_data(string data)
+        private void send_data(string data)
         {
             try
             {

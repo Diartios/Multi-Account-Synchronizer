@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,14 @@ namespace Multi_Account_Synchronizer
         public PhoenixApi phoenixapi = new PhoenixApi();
         public List<Item> Inventory = new List<Item>();
         public List<Tuple<string, int>> Skills = new List<Tuple<string, int>>();
+        public Dictionary<int, bool> SkillReady = new Dictionary<int, bool>();
         public bool updated = false;
         public bool NormalFlower = false;
         public bool StrongFlower = false;
         public bool Dancing = false;
         public Stopwatch FlowerSW = new Stopwatch();
+        public Pet Pet = new Pet();
+        public string PartnerId = "";
         public class Item
         {
             public string Name { get; set; }
@@ -35,15 +39,19 @@ namespace Multi_Account_Synchronizer
             public int Pos { get; set; }
             public int Type { get; set; }
         }
+       
         public void handle_skills(string info)
         {
             Skills.Clear();
+            SkillReady.Clear();
             JObject skills = JObject.Parse(info);
             foreach (var skill in skills["skills"])
             {
                 string name = skill["name"].ToString();
                 int id = ((int)skill["id"]);
+                bool isReady = ((bool)skill["is_ready"]);
                 Tuple<string, int> obj = new Tuple<string, int>(name, id);
+                SkillReady[id] = isReady;
                 Skills.Add(obj);
             }
             updated = true;
@@ -88,6 +96,105 @@ namespace Multi_Account_Synchronizer
                 handle_cinfo(packet_splitted, full_packet);
             else if (header == "bf")
                 handle_bf(packet_splitted, full_packet);
+            else if (header == "petski")
+                handle_petski(packet_splitted, full_packet);
+            else if (header == "pet_cool2")
+                handle_pet_cool2(packet_splitted, full_packet);
+            else if (header == "petsr")
+                handle_petsr(packet_splitted, full_packet);
+            else if (header == "ptctl")
+                handle_ptctl(packet_splitted, full_packet);
+            else if (header == "in")
+                handle_in(packet_splitted, full_packet);
+            else if (header == "pst")
+                handle_pst(packet_splitted, full_packet);
+        }
+        public void handle_pst(List<string> packet_splitted, string full_packet)
+        {
+            if (packet_splitted[1] == "2" && packet_splitted[3] == "1")
+            {
+                Pet.Id = int.Parse(packet_splitted[2]);
+            }
+            if (packet_splitted[1] == "2" && packet_splitted[3] == "0")
+            {
+                PartnerId = packet_splitted[2];
+            }
+        }
+        public void handle_in(List<string> packet_splitted, string full_packet)
+        {
+            if (packet_splitted[1] == "1")
+                return;
+
+            int vnum = int.Parse(packet_splitted[2]);
+            int x = int.Parse(packet_splitted[4]);
+            int y = int.Parse(packet_splitted[5]);
+            if (packet_splitted[1] == "2" && packet_splitted[3] == Pet.Id.ToString())
+            {
+                Pet.X = x;
+                Pet.Y = y;
+            }
+        }
+        public void handle_ptctl(List<string> packet_splitted, string full_packet)
+        {
+            map_id = int.Parse(packet_splitted[1]);
+            if (packet_splitted[2] == "2")
+            {
+                int x1 = int.Parse(packet_splitted[4]);
+                int y1 = int.Parse(packet_splitted[5]);
+                int x2 = int.Parse((packet_splitted[7]));
+                int y2 = int.Parse(packet_splitted[8]);
+                if (packet_splitted[3] == Pet.Id.ToString())
+                {
+                    Pet.X = x1;
+                    Pet.Y = y1;
+                }
+                else if (packet_splitted[3] == PartnerId)
+                {
+                    Pet.X = x2;
+                    Pet.Y = y2;
+                }
+            }
+            else if (packet_splitted[2] == "1")
+            {
+                int x = int.Parse(packet_splitted[4]);
+                int y = int.Parse(packet_splitted[5]);
+                if (packet_splitted[3] == Pet.Id.ToString())
+                {
+                    Pet.X = x;
+                    Pet.Y = y;
+                }
+            }
+        }
+        public void handle_petski(List<string> packet_splitted, string full_packet)
+        {
+            Pet.Skills.Clear();
+            for (int i = 1; i < packet_splitted.Count; i++)
+            {
+                int skillvnum = int.Parse(packet_splitted[i]);
+                if (skillvnum == -1)
+                    continue;
+                Pet.Skills[skillvnum] = false;
+            }
+        }
+        public void handle_pet_cool2(List<string> packet_splitted, string full_packet)
+        {
+            for (int i = 2; i < packet_splitted.Count; i++)
+            {
+                if (i > Pet.Skills.Count + 1)
+                    break;
+                int key = Pet.Skills.ElementAt(i - 2).Key;
+                Pet.Skills[key] = packet_splitted[i] == "0";
+            }
+        }
+        public void handle_petsr(List<string> packet_splitted, string full_packet)
+        {
+            if (packet_splitted.Count < 2)
+                return;
+            int index = int.Parse(packet_splitted[1]);
+            if (index >= Pet.Skills.Count)
+                return;
+            int key = Pet.Skills.ElementAt(index).Key;
+            Pet.Skills[key] = true;
         }
         public void handle_bf(List<string> packet_splitted, string full_packet)
         {
@@ -98,7 +205,6 @@ namespace Multi_Account_Synchronizer
             if (packet_splitted[2] != id.ToString())
                 return;
             string[] split = packet_splitted[3].Split('.');
-
             if (split[1] == "378" && split[2] != "0")
             {
                 NormalFlower = true;
@@ -112,7 +218,7 @@ namespace Multi_Account_Synchronizer
             else if (split[1] == "379" && split[2] != "0")
             {
                 StrongFlower = true;
-                FlowerSW.Reset();
+                FlowerSW.Restart();
             }
             else if (split[1] == "379" && split[2] == "0")
             {
@@ -222,6 +328,11 @@ namespace Multi_Account_Synchronizer
                     x = int.Parse(packet_splitted[4]);
                     y = int.Parse(packet_splitted[5]);
                 }
+                if (packet_splitted[1] == "3" && packet_splitted[2] == "2" && packet_splitted[3] == Pet.Id.ToString())
+                {
+                    Pet.X = int.Parse(packet_splitted[4]);
+                    Pet.Y = int.Parse(packet_splitted[5]);
+                }
             }
             catch (Exception e)
             {
@@ -237,6 +348,11 @@ namespace Multi_Account_Synchronizer
             {
                 x = int.Parse(packet_splitted[3]);
                 y = int.Parse(packet_splitted[4]);
+            }
+            if (packet_splitted[1] == "2" && packet_splitted[2] == Pet.Id.ToString())
+            {
+                Pet.X = int.Parse(packet_splitted[3]);
+                Pet.Y = int.Parse(packet_splitted[4]);
             }
         }
         // Flag: Has Dispose already been called?

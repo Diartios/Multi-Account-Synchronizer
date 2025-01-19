@@ -208,9 +208,9 @@ namespace Multi_Account_Synchronizer
             handler.bot = bot;
             scene.player = player;
             player.phoenixapi = api;
-            bot.player = player;
-            bot.scene = scene;
-            bot.phoenixapi = api;
+            bot.Player = player;
+            bot.Scene = scene;
+            bot.Api = api;
             api.receive_message();
             handler.start();
             api.query_player_info();
@@ -279,12 +279,15 @@ namespace Multi_Account_Synchronizer
 
             while (player.id <= 0 || player.name == "")
                 await Task.Delay(100);
-            bot.random = new Random(player.id);
+            bot.Random = new Random(player.id);
             JObject Members = new JObject();
             Random random = new Random(player.id);
             RadioButton DPS = b.radioButton1;
             RadioButton Buffer = b.radioButton2;
             RadioButton MinilandOwner = b.radioButton3;
+            CheckBox Otter = b.OttercheckBox;
+            CheckBox Panda = b.PandaCheckBox;
+
             string path = "";
             using (StreamReader file = new StreamReader("Members.json"))
             {
@@ -300,6 +303,8 @@ namespace Multi_Account_Synchronizer
             int attackluremin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Min", 1500);
             int attackluremax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Max", 2100);
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
+            int vokeDelay = Statics.JsonGetValueOrDefault(Members["General Settings"], "Voke Delay", 750);
+            bool trashItems = Statics.JsonGetValueOrDefault(Members["General Settings"], "Trash Items", true);
             if (inviteCommand != "" && !Statics.InviteCommands.ContainsKey(inviteCommand))
             {
                 inviteCommand = "";
@@ -313,6 +318,8 @@ namespace Multi_Account_Synchronizer
             bot.AmuletUseDelay = amulet;
             bot.StartAttackDelay = attack;
             bot.InviteCommand = inviteCommand;
+            bot.VokeDelay = vokeDelay;
+            bot.TrashItems = trashItems;
             foreach (var member in Members["Members"])
             {
 
@@ -321,6 +328,8 @@ namespace Multi_Account_Synchronizer
                     DPS.Checked = Statics.JsonGetValueOrDefault(member, "DPS", false);
                     Buffer.Checked = Statics.JsonGetValueOrDefault(member, "Buffer", true);
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
+                    Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
+                    Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
@@ -481,6 +490,8 @@ namespace Multi_Account_Synchronizer
             generalSettings.Add("Attack Lure Min", a.Item5.StartAttackDelay.Item1);
             generalSettings.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
             generalSettings.Add("Invite Command", a.Item5.InviteCommand);
+            generalSettings.Add("Voke Delay", a.Item5.VokeDelay);
+            generalSettings.Add("Loot Trash Items", a.Item5.TrashItems);
             content["General Settings"] = generalSettings;
             foreach (var api in apis)
             {
@@ -500,6 +511,8 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
+                newItem.Add("Otter", api.Item5.Otter);
+                newItem.Add("Panda", api.Item5.Panda);
                 newItem.Add("Path", api.Item6.textBox2.Text);
                 newItem["buffs"] = buffs;
                 players.Add(newItem);
@@ -560,6 +573,18 @@ namespace Multi_Account_Synchronizer
                 samekeydelay = a.Item5.DelaySameKey;
                 differentkeydelay = a.Item5.DelayDifferentKey;
             }
+            bool updateVoke = apis.Count(x => x.Item5.UpdateVoke) == apis.Count(x => x.Item5.DPS);
+            var vokeAcc = apis.Where(x => x.Item5.DPS && x.Item5.IsVokeReady()).FirstOrDefault();
+            if (vokeAcc != null)
+            {
+                Console.WriteLine(vokeAcc.Item3.name);
+            }
+            if (updateVoke && vokeAcc != null)
+            {
+
+                vokeAcc.Item5.UpdateVoke = false;
+                vokeAcc.Item5.UseVoke = true;
+            }
             foreach ( var api in apis )
             {
                 api.Item5.DefenceMob = defencemob;
@@ -584,6 +609,10 @@ namespace Multi_Account_Synchronizer
                     api.Item5.UpdateBuff = false;
                     
                 }
+                if (updateVoke)
+                {
+                    api.Item5.UpdateVoke = false;
+                }
             }
         }
 
@@ -591,6 +620,20 @@ namespace Multi_Account_Synchronizer
         {
             Settings s = new Settings(apis);
             s.ShowDialog();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (apis.Count(x => x.Item5.run) > 0)
+            {
+                var result = MessageBox.Show("Phoenix Bots might be still running. Would you like to stop them?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    apis.ForEach(x => x.Item1.stop_bot());
+                }
+            }
+            
+            
         }
     }
 }
