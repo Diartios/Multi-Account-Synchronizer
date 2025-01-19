@@ -32,12 +32,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.roundedButton5 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton3 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton4 = new Multi_Account_Synchronizer.RoundedButton();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,10 +78,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(452, 34);
             this.tableLayoutPanel2.TabIndex = 3;
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // roundedButton5
             // 
@@ -198,6 +194,10 @@
             this.roundedButton4.UseVisualStyleBackColor = false;
             this.roundedButton4.Click += new System.EventHandler(this.roundedButton4_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -210,6 +210,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Multi Account Synchronizer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);

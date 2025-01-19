@@ -52,6 +52,10 @@
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.InviteCommandsComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.VokeDelay = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.TrashItemsCheckBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMin)).BeginInit();
@@ -65,6 +69,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMin)).BeginInit();
             this.tableLayoutPanel5.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VokeDelay)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -125,9 +131,9 @@
             // 
             // label1
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 8);
+            this.label1.Location = new System.Drawing.Point(3, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 13);
             this.label1.TabIndex = 0;
@@ -201,9 +207,9 @@
             // 
             // label3
             // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 8);
+            this.label3.Location = new System.Drawing.Point(3, 8);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(92, 13);
             this.label3.TabIndex = 0;
@@ -230,7 +236,7 @@
             this.tableLayoutPanel3.Controls.Add(this.ExitMinilandMin, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.label5, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.label6, 2, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(9, 43);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(9, 79);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -277,9 +283,9 @@
             // 
             // label5
             // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(19, 8);
+            this.label5.Location = new System.Drawing.Point(3, 8);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 13);
             this.label5.TabIndex = 0;
@@ -306,7 +312,7 @@
             this.tableLayoutPanel4.Controls.Add(this.UseAmuletMin, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.label8, 2, 0);
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(9, 79);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(9, 43);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -353,9 +359,9 @@
             // 
             // label7
             // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(21, 8);
+            this.label7.Location = new System.Drawing.Point(3, 8);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(91, 13);
             this.label7.TabIndex = 0;
@@ -374,11 +380,11 @@
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel5.Controls.Add(this.InviteCommandsComboBox, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.label9, 0, 0);
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(9, 151);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(9, 187);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -399,28 +405,87 @@
             "Inviter",
             "Davet",
             "InvM"});
-            this.InviteCommandsComboBox.Location = new System.Drawing.Point(171, 4);
+            this.InviteCommandsComboBox.Location = new System.Drawing.Point(137, 4);
             this.InviteCommandsComboBox.Name = "InviteCommandsComboBox";
-            this.InviteCommandsComboBox.Size = new System.Drawing.Size(162, 21);
+            this.InviteCommandsComboBox.Size = new System.Drawing.Size(196, 21);
             this.InviteCommandsComboBox.TabIndex = 7;
             this.InviteCommandsComboBox.SelectedIndexChanged += new System.EventHandler(this.InviteCommandsComboBox_SelectedIndexChanged);
             // 
             // label9
             // 
-            this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(20, 8);
+            this.label9.Location = new System.Drawing.Point(3, 8);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(128, 13);
             this.label9.TabIndex = 0;
             this.label9.Text = "Miniland Invite Command:";
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel6.Controls.Add(this.VokeDelay, 1, 0);
+            this.tableLayoutPanel6.Controls.Add(this.label10, 0, 0);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(9, 151);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(336, 30);
+            this.tableLayoutPanel6.TabIndex = 5;
+            // 
+            // VokeDelay
+            // 
+            this.VokeDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.VokeDelay.Location = new System.Drawing.Point(137, 5);
+            this.VokeDelay.Maximum = new decimal(new int[] {
+            1874919423,
+            2328306,
+            0,
+            0});
+            this.VokeDelay.Name = "VokeDelay";
+            this.VokeDelay.Size = new System.Drawing.Size(196, 20);
+            this.VokeDelay.TabIndex = 47;
+            this.VokeDelay.Value = new decimal(new int[] {
+            1500,
+            0,
+            0,
+            0});
+            this.VokeDelay.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
+            // 
+            // label10
+            // 
+            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(3, 8);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(119, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Min Delay Before Voke:";
+            // 
+            // TrashItemsCheckBox
+            // 
+            this.TrashItemsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.TrashItemsCheckBox.AutoSize = true;
+            this.TrashItemsCheckBox.Checked = true;
+            this.TrashItemsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.TrashItemsCheckBox.Location = new System.Drawing.Point(15, 223);
+            this.TrashItemsCheckBox.Name = "TrashItemsCheckBox";
+            this.TrashItemsCheckBox.Size = new System.Drawing.Size(105, 17);
+            this.TrashItemsCheckBox.TabIndex = 50;
+            this.TrashItemsCheckBox.Text = "Loot Trash Items";
+            this.TrashItemsCheckBox.UseVisualStyleBackColor = true;
+            this.TrashItemsCheckBox.CheckedChanged += new System.EventHandler(this.TrashItemsCheckBox_CheckedChanged_1);
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(359, 192);
+            this.ClientSize = new System.Drawing.Size(359, 249);
+            this.Controls.Add(this.TrashItemsCheckBox);
+            this.Controls.Add(this.tableLayoutPanel6);
             this.Controls.Add(this.tableLayoutPanel5);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
@@ -450,7 +515,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.UseAmuletMin)).EndInit();
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.VokeDelay)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -479,5 +548,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox InviteCommandsComboBox;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        public System.Windows.Forms.NumericUpDown VokeDelay;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox TrashItemsCheckBox;
     }
 }

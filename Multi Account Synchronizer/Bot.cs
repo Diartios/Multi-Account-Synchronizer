@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -21,10 +22,10 @@ namespace Multi_Account_Synchronizer
 {
     internal class Bot
     {
-        public Player player = new Player();
-        public Scene scene = new Scene();
-        public PhoenixApi phoenixapi = new PhoenixApi();
-        public Random random = new Random();
+        public Player Player = new Player();
+        public Scene Scene = new Scene();
+        public PhoenixApi Api = new PhoenixApi();
+        public Random Random = new Random();
         public bool map_changed = false;
         public bool run = false;
         public int delayer = 1;
@@ -57,9 +58,9 @@ namespace Multi_Account_Synchronizer
         public bool HelpAmulet = false;
         public int HelpNeededMobId = -1;
         public int DefenceMob = -1;
-        
 
 
+        public bool Attacked = false;
 
 
         int[][] CurrentMap = Statics.LoadMap(-1);
@@ -70,6 +71,7 @@ namespace Multi_Account_Synchronizer
         public bool Otter = false;
         public bool Panda = false;
         public bool UseVoke = false;
+        public bool UpdateVoke = false;
         public bool GoNextLure = false;
         public bool StartAttack = false;
         public int LureMob = -1;
@@ -118,6 +120,7 @@ namespace Multi_Account_Synchronizer
         public bool IgnoreFlower = false;
         public List<int> LootList = new List<int>();
         private int CurrentLootId = -1;
+        public bool TrashItems = true;
         #endregion
 
         #region Security Variables
@@ -131,6 +134,7 @@ namespace Multi_Account_Synchronizer
         public Tuple<int, int> AmuletUseDelay = new Tuple<int, int>(750, 1450);
         public Tuple<int, int> StartAttackDelay = new Tuple<int, int>(1500, 2100);
         public Tuple<int, int> AcceptInviteDelay = new Tuple<int, int>(1000, 2000);
+        public int VokeDelay = 750;
         #endregion
         public Bot()
         {
@@ -149,20 +153,20 @@ namespace Multi_Account_Synchronizer
             Stopwatch s = Stopwatch.StartNew();
             map_changed = false;
             AddLog($"Walking to {x} | {y}", "Walk");
-            while ((player.x != x || player.y != y) && !map_changed)
+            while ((Player.x != x || Player.y != y) && !map_changed)
             {
-                phoenixapi.player_walk(x, y);
-                phoenixapi.pets_walk(x, y);
+                Api.player_walk(x, y);
+                Api.pets_walk(x, y);
                 await Task.Delay(490);
             }
 
         }
         private async Task Walk(WalkPoint point)
         {
-            if (LastLoadedMap != player.map_id && player.map_id != 20001)
+            if (LastLoadedMap != Player.map_id && Player.map_id != 20001)
             {
-                CurrentMap = Statics.LoadMap(player.map_id);
-                LastLoadedMap = player.map_id;
+                CurrentMap = Statics.LoadMap(Player.map_id);
+                LastLoadedMap = Player.map_id;
             }
             ReachedKillPoint = false;
             map_changed = false;
@@ -170,8 +174,8 @@ namespace Multi_Account_Synchronizer
             int randy = 0;
             if (RandomizeWalk && CurrentMap.Length > 0)
             {
-                randx = random.Next(-1 * RandomizeWalkValue, RandomizeWalkValue + 1);
-                randy = random.Next(-1 * RandomizeWalkValue, RandomizeWalkValue + 1);
+                randx = Random.Next(-1 * RandomizeWalkValue, RandomizeWalkValue + 1);
+                randy = Random.Next(-1 * RandomizeWalkValue, RandomizeWalkValue + 1);
             }
             //check if the cell is walkable
             if (CurrentMap.Length > 0 && RandomizeWalk)
@@ -194,11 +198,11 @@ namespace Multi_Account_Synchronizer
             }
 
             AddLog($"Walking to {point.X + randx} | {point.Y + randy}", "Walk");
-            while ((player.x != point.X + randx || player.y != point.Y + randy) && !map_changed && run)
+            while ((Player.x != point.X + randx || Player.y != point.Y + randy) && !map_changed && run)
             {
-                phoenixapi.player_walk(point.X + randx, point.Y + randy);
+                Api.player_walk(point.X + randx, point.Y + randy);
                 if (WalkWithPets)
-                    phoenixapi.pets_walk(point.X + randx, point.Y + randy);
+                    Api.pets_walk(point.X + randx, point.Y + randy);
                 await Task.Delay(500);
             
             }
@@ -212,7 +216,7 @@ namespace Multi_Account_Synchronizer
         }
         public void Start()
         {
-            phoenixapi.start_bot();
+            Api.start_bot();
         }
         public void Stop()
         {
@@ -221,7 +225,7 @@ namespace Multi_Account_Synchronizer
             UpdateBuff = false;
             EnterMini = false;
             WaitingForMiniland = false;
-            phoenixapi.stop_bot();
+            Api.stop_bot();
             LureMob = -1;
         }
         private int DelayGenerator(Tuple<int,int> range)
@@ -231,7 +235,7 @@ namespace Multi_Account_Synchronizer
             else if (range.Item1 == range.Item2)
                 return range.Item1;
 
-            int delay = random.Next(range.Item1,range.Item2);
+            int delay = Random.Next(range.Item1,range.Item2);
             return delay;
         }
         public async Task Run()
@@ -266,10 +270,10 @@ namespace Multi_Account_Synchronizer
                         }
                         if (i == 0)
                         {
-                            await Task.Delay(random.Next(600, 1400));
+                            await Task.Delay(Random.Next(600, 1400));
                         }
                         //wait respawn
-                        while (WaitRespawn && scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) < 0 && run)
+                        while (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
                             await Task.Delay(100);
                         if (!run)
                         {
@@ -292,11 +296,13 @@ namespace Multi_Account_Synchronizer
                             Finished = true;
                             while (!GoNextLure && run)
                                 await Task.Delay(100);
+                            
                             if (!run)
                             {
                                 Stop();
                                 continue;
                             }
+                            
                             if (MiniEnabled)
                             {
                                 UpdateBuff = true;
@@ -312,7 +318,10 @@ namespace Multi_Account_Synchronizer
                                     await MinilandDPS();
                                 }
                             }
-                            
+                            if (i != Path.Count - 1)
+                            {
+                                await Task.Delay(Random.Next(400, 850));
+                            }
                         }
                         i++;
                     }
@@ -347,22 +356,22 @@ namespace Multi_Account_Synchronizer
         private async Task SelfDefence()
         {
             map_changed = false;
-            if (scene.LastAttacks.Count > 0 && run && !map_changed)
+            if (Scene.LastAttacks.Count > 0 && run && !map_changed)
             {
                 
                 AddLog("Killing the monsters that attacked to us", "Self Defence");
-                while (scene.LastAttacks.Count > 0 && run && !map_changed)
+                while (Scene.LastAttacks.Count > 0 && run && !map_changed)
                 {
-                    Scene.Entities entity = scene.LastAttacks.Values.ElementAt(0);
-                    if (!scene.EntityData.ContainsKey(entity.Id) || (DateTime.Now - entity.LastAttack).TotalSeconds > 10.0)
-                        scene.LastAttacks.Remove(entity.Id);
+                    Scene.Entities entity = Scene.LastAttacks.Values.ElementAt(0);
+                    if (!Scene.EntityData.ContainsKey(entity.Id) || (DateTime.Now - entity.LastAttack).TotalSeconds > 10.0)
+                        Scene.LastAttacks.Remove(entity.Id);
                     else
                     {
                         NeedHelp = true;
-                        while (scene.EntityData.ContainsKey(entity.Id) && run && !map_changed)
+                        while (Scene.EntityData.ContainsKey(entity.Id) && run && !map_changed)
                         {
                             HelpNeededMobId = entity.Id;
-                            phoenixapi.attack_monster(entity.Id);
+                            Api.attack_monster(entity.Id);
                             await Task.Delay(200);
                         }
                     }
@@ -381,15 +390,15 @@ namespace Multi_Account_Synchronizer
         private void CheckSelfDefenceMobs()
         {
             List<int> MobsToDelete = new List<int>();
-            foreach (var entity in scene.LastAttacks.Values)
+            foreach (var entity in Scene.LastAttacks.Values)
             {
-                if (!scene.EntityData.ContainsKey(entity.Id) || (DateTime.Now - entity.LastAttack).TotalSeconds > 10.0)
+                if (!Scene.EntityData.ContainsKey(entity.Id) || (DateTime.Now - entity.LastAttack).TotalSeconds > 10.0)
                     MobsToDelete.Add(entity.Id);
             }
             foreach (int id in MobsToDelete)
             {
-                if (scene.LastAttacks.ContainsKey(id))
-                    scene.LastAttacks.Remove(id);
+                if (Scene.LastAttacks.ContainsKey(id))
+                    Scene.LastAttacks.Remove(id);
             }
         }
         private async Task Amulet()
@@ -399,11 +408,11 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            player.updated = false;
-            phoenixapi.query_inventory();
-            while (!player.updated)
+            Player.updated = false;
+            Api.query_inventory();
+            while (!Player.updated)
                 await Task.Delay(1);
-            var item = player.Inventory.Where(x => x.Vnum == 2071).FirstOrDefault();
+            var item = Player.Inventory.Where(x => x.Vnum == 2071).FirstOrDefault();
             if (item == null)
             {
                 AddLog($"Couldn't find item by vnum {2071}", "Amulet");
@@ -412,19 +421,19 @@ namespace Multi_Account_Synchronizer
             map_changed = false;
             await Task.Delay(DelayGenerator(AmuletUseDelay));
             CheckSelfDefenceMobs();
-            if (scene.LastAttacks.Count > 0)
+            if (Scene.LastAttacks.Count > 0)
                 await SelfDefence();
             while (!map_changed && run)
             {
                 AddLog("Trying to use amulet", "Amulet");
-                phoenixapi.send_packet($"u_i 1 {player.id} 2 {item.Pos} 0 0");
+                Api.send_packet($"u_i 1 {Player.id} 2 {item.Pos} 0 0");
                 await Task.Delay(1000);
-                phoenixapi.send_packet($"#u_i^1^{player.id}^2^{item.Pos}^1");
+                Api.send_packet($"#u_i^1^{Player.id}^2^{item.Pos}^1");
                 for (int i = 0; i < 90; i++)
                 {
-                    if (HelpAmulet || map_changed || scene.LastAttacks.Count > 0 || !run)
+                    if (HelpAmulet || map_changed || Scene.LastAttacks.Count > 0 || !run)
                         break;
-                    if (i > 10 && !player.Dancing)
+                    if (i > 10 && !Player.Dancing)
                     {
                         AddLog("Player is not dancing", "Amulet");
                         break;
@@ -446,12 +455,12 @@ namespace Multi_Account_Synchronizer
                     AddLog("Going to help", "Amulet");
                     await GoHelp();
                 }
-                else if (scene.LastAttacks.Count > 0)
+                else if (Scene.LastAttacks.Count > 0)
                 {
                     AddLog("Self Defence", "Amulet");
                     await SelfDefence();
                 }
-                await Task.Delay(random.Next(1000, 1450));
+                await Task.Delay(Random.Next(1000, 1450));
             }
             
 
@@ -460,7 +469,7 @@ namespace Multi_Account_Synchronizer
         {
             while (HelpAmulet && DefenceMob > 0 && !map_changed && run)
             {
-                phoenixapi.attack_monster(DefenceMob);
+                Api.attack_monster(DefenceMob);
                 await Task.Delay(200);
             }
             if (!run)
@@ -469,6 +478,31 @@ namespace Multi_Account_Synchronizer
                 return;
             }
         }
+        private bool ShouldIgnoreFlower()
+        {
+            bool ignoreFlower = true;
+            if (!IgnoreFlower)
+            {
+                ignoreFlower = false;
+            }
+            else if (Player.FlowerSW.Elapsed.TotalSeconds == 0 && !Player.StrongFlower)
+            {
+                ignoreFlower = false;
+            }
+            else if (Player.FlowerSW.Elapsed.TotalSeconds >= 7 * 60 && Player.NormalFlower)
+            {
+                ignoreFlower = false;
+            }
+            else if (!Player.NormalFlower && !Player.StrongFlower)
+            {
+                ignoreFlower = false;
+            }
+            else if (Player.StrongFlower && Player.FlowerSW.Elapsed.TotalSeconds >= 40)
+            {
+                ignoreFlower = false;
+            }
+            return ignoreFlower;
+        }
         private async Task Loot()
         {
             if (!run)
@@ -476,44 +510,43 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            await Task.Delay(random.Next(350, 750));
+            await Task.Delay(Random.Next(350, 750));
             AddLog("Started looting", "Loot");
             
-            bool ignoreflower = true;
-            if (!IgnoreFlower)
-            {
-                ignoreflower = false;
-            }
-            else if (player.FlowerSW.Elapsed.TotalSeconds == 0 && !player.StrongFlower)
-            {
-                ignoreflower = false;
-            }
-            else if (player.FlowerSW.Elapsed.Minutes >= 7 && player.NormalFlower)
-            {
-                ignoreflower = false;
-            }
-            else if (!player.NormalFlower && !player.StrongFlower)
-            {
-                ignoreflower = false;
-            }
-            var loot = scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreflower, MyItems, GroupItems, NeutralItems, LootList);
+            bool ignoreFlower = ShouldIgnoreFlower();
+            var loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
             Stopwatch sw = Stopwatch.StartNew();
             map_changed = false;
             while (loot.Id != -1 && run && !map_changed)
             {
-                CurrentLootId = loot.Id;
-                while (scene.LootData.ContainsKey(loot.Id) && run)
+                ignoreFlower = ShouldIgnoreFlower();
+                if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2))
                 {
-                    phoenixapi.pick_up(loot.Id);
-                    await Task.Delay(300);
-                    if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && scene.LootData.ContainsKey(loot.Id))
+                    Api.player_walk(loot.Pos.X, loot.Pos.Y);
+                }
+                else
+                {
+                    var list = Scene.GetLootList(LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList,TrashItems);
+                    foreach (var lood in list)
                     {
-                        scene.LootData.Remove(loot.Id);
-                        sw.Restart();
+                        AddLog($"Looting item with id {lood.Id} and vnum {lood.Vnum}", "Loot");
+                        while (Scene.LootData.ContainsKey(lood.Id) && run)
+                        {
+                            CurrentLootId = lood.Id;
+                            Api.pick_up(lood.Id);
+                            await Task.Delay(200);
+                            if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
+                            {
+                                Scene.LootData.Remove(loot.Id);
+                                sw.Restart();
+                            }
+                            sw.Restart();
+                        }
                     }
                 }
+
                 
-                loot = scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreflower, MyItems, GroupItems, NeutralItems, LootList);
+                loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
                 sw.Restart();
                 await Task.Delay(10);
             }
@@ -523,6 +556,15 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
+        }
+        public bool IsVokeReady()
+        {
+            bool isReady = false;
+            if (Panda && Player.Pet.Skills.ContainsKey(1714))
+                isReady = Player.Pet.Skills[1714];
+            else if (Otter && Player.Pet.Skills.ContainsKey(663))
+                isReady = Player.Pet.Skills[663];
+            return isReady;
         }
         private async Task KillLure()
         {
@@ -557,9 +599,11 @@ namespace Multi_Account_Synchronizer
             Stopwatch luresw = Stopwatch.StartNew();
             Stopwatch targetsw = Stopwatch.StartNew();
             int oldmob = LureMob;
+            UseVoke = false;
+            UpdateVoke = true;
             while (LureMob > 0 && !map_changed && run)
             {
-                phoenixapi.attack_monster(LureMob);
+                Api.attack_monster(LureMob);
                 await Task.Delay(200);
                 if (oldmob != LureMob)
                 {
@@ -568,23 +612,31 @@ namespace Multi_Account_Synchronizer
                 }
                 if (oldmob == LureMob && IgnoreTarget && targetsw.Elapsed.TotalSeconds >= IgnoreTargetValue)
                 {
-                    if (scene.EntityData.ContainsKey(LureMob))
-                        scene.EntityData.Remove(LureMob);
+                    if (Scene.EntityData.ContainsKey(LureMob))
+                        Scene.EntityData.Remove(LureMob);
                 }
-                if (UseVoke && luresw.Elapsed.TotalSeconds >= 3)
+                if (UseVoke && luresw.Elapsed.TotalMilliseconds >= VokeDelay)
                 {
-                    if (Panda)
+                    if (Panda && IsVokeReady())
                     {
-                        phoenixapi.use_pet_skill(LureMob, 1714);
+                        Api.use_pet_skill(LureMob, 1714);
                     }
-                    if (Otter)
+                    if (Otter && IsVokeReady())
                     {
-                        var mob = scene.EntityData.Values.Where(x => x.Id == LureMob).FirstOrDefault();
+                        var mob = Scene.EntityData.Values.Where(x => x.Id == LureMob).FirstOrDefault();
                         if (mob != null)
                         {
-                            phoenixapi.pets_walk(mob.Pos.X, mob.Pos.Y);
-                            await Task.Delay(2000);
-                            phoenixapi.use_pet_skill(LureMob, 663);
+                            
+                            
+                            if (Statics.Distance(mob.Pos, new Point(Player.Pet.X,Player.Pet.Y)) <= Math.Sqrt(2))
+                            {
+                                Api.use_pet_skill(LureMob, 663);
+                            }
+                            else
+                            {
+                                Api.pets_walk(mob.Pos.X, mob.Pos.Y);
+                            }
+                            
                         }
                     }
                 }
@@ -606,7 +658,7 @@ namespace Multi_Account_Synchronizer
             WaitingForMiniland = true;
             AddLog("Going to Miniland", "Miniland DPS");
             map_changed = false;
-            while (player.map_id != 20001 && !map_changed && run)
+            while (Player.map_id != 20001 && !map_changed && run)
                 await Task.Delay(100);
             if (!run)
             {
@@ -615,7 +667,7 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            if (player.map_id != 20001)
+            if (Player.map_id != 20001)
             {
                 WaitingForMiniland = false;
                 ResetMinilandsw = true;
@@ -623,16 +675,19 @@ namespace Multi_Account_Synchronizer
             }
             WaitingForMiniland = false;
             AddLog("Entered Miniland", "Miniland DPS");
-            await UseBuff();
+            ResetMinilandsw = true;
             while (!StartBuff && run)
                 await Task.Delay(100);
+            
+            await UseBuff();
+          
             if (!run)
             {
                 ResetMinilandsw = true;
                 Stop();
                 return;
             }
-            ResetMinilandsw = true;
+            
             await Task.Delay(2000);
             while (!LeaveMiniland && run)
                 await Task.Delay(100);
@@ -664,7 +719,7 @@ namespace Multi_Account_Synchronizer
                 if (InviteCommand == "")
                     return;
                 AddLog($"Inviting account with name {account}", "Miniland Master");
-                phoenixapi.send_packet($"${InviteCommand} {account}");
+                Api.send_packet($"${InviteCommand} {account}");
                 await Task.Delay(1000);
             }
             while (!StartBuff && run)
@@ -677,13 +732,20 @@ namespace Multi_Account_Synchronizer
         {
             if (!run)
                 return;
+            Player.updated = false;
+            Api.query_skills_info();
+            while (!Player.updated)
+                await Task.Delay(1);
             Buffing = true;
             foreach (var id in Buffs)
             {
-
+                if (!Player.SkillReady.ContainsKey(id.Item2))
+                    continue;
+                if (!Player.SkillReady[id.Item2])
+                    continue;
                 await Task.Delay(DelaySameKey * delayer);
                 AddLog("Using " + id.Item1, "Buff");
-                phoenixapi.send_packet($"u_s {id.Item2} 1 {player.id}");
+                Api.send_packet($"u_s {id.Item2} 1 {Player.id}");
                 await Task.Delay(DelayDifferentKey);
             }
             Buffing = false;
@@ -692,19 +754,19 @@ namespace Multi_Account_Synchronizer
         {
             //3 8
 
-            int x = 3 + random.Next(-1,2);
-            int y = 8 + random.Next(-1,2);
+            int x = 3 + Random.Next(-1,2);
+            int y = 8 + Random.Next(-1,2);
             Stopwatch sw = Stopwatch.StartNew();
             await Task.Delay(DelayGenerator(MinilandExitDelay));
-            while (player.map_id == 20001)
+            while (Player.map_id == 20001)
             {
-                phoenixapi.player_walk(x, y);
-                phoenixapi.pets_walk(x, y);
+                Api.player_walk(x, y);
+                Api.pets_walk(x, y);
                 await Task.Delay(1500);
                 if (sw.Elapsed.TotalSeconds >= 5)
                 {
-                    x = 3 + random.Next(-1, 2);
-                    y = 8 + random.Next(-1, 2);
+                    x = 3 + Random.Next(-1, 2);
+                    y = 8 + Random.Next(-1, 2);
                     sw.Restart();
                 }
             }
@@ -835,11 +897,74 @@ namespace Multi_Account_Synchronizer
                 await Task.Delay(500);
             if (!File.Exists(newpath))
                 return;
-            phoenixapi.load_settings(newpath);
+            Api.load_settings(newpath);
             await Task.Delay(10 * 1000);
             File.Delete(newpath);
         }
+        double RandomDegreeToRadian(double degreeMin, double degreeMax)
+        {
+            if (degreeMin == degreeMax)
+                return degreeMin / 180 * 3.14;
+            if (degreeMax < degreeMin)
+                return degreeMax / 180 * 3.14;
+            int rnd = Random.Next((int)degreeMin, (int)degreeMax + 1);
+            double randomdegree = Convert.ToDouble(rnd);
+            return randomdegree / 180 * 3.14;
+        }
+        private async Task WalkRangePoint(Point p, double distance)
+        {
+            double radian = Math.Atan2(Player.y - p.Y, Player.x - p.X);
+            radian += RandomDegreeToRadian(-30, 30);
+            int cos = (int)Math.Round((Math.Cos(radian) * distance));
+            int sin = (int)Math.Round(Math.Sin(radian) * distance);
+            int x = p.X + cos;
+            int y = p.Y + sin;
+            double totalradadded = 0;
+            radian -= 3.14 / 3;
+            while (!IsWalkable(x, y) && totalradadded < 6.28)
+            {
+                var nexttoadd = RandomDegreeToRadian(10, 15);
+                radian += nexttoadd;
+                totalradadded += nexttoadd;
+                cos = (int)Math.Round((Math.Cos(radian) * distance));
+                sin = (int)Math.Round(Math.Sin(radian) * distance);
+                x = p.X + cos;
+                y = p.Y + sin;
+            }
+            if (totalradadded >= 6.28)
+            {
+            }
+            if (!IsWalkable(x, y))
+            {
 
+            }
+            Api.player_walk(x, y);
+            await Task.Delay(500);
+        }
+        private bool IsWalkable(int x, int y)
+        {
+            bool walkable = true;
+            if (CurrentMap.Length > 0)
+            {
+                if (x < 0 || y < 0)
+                {
+                    walkable = false;
+                }
+                else if (x >= CurrentMap.Length)
+                {
+                    walkable = false;
+                }
+                else if (y >= CurrentMap[x].Length)
+                {
+                    walkable = false;
+                }
+                else if (CurrentMap[x][y] == 0)
+                {
+                    walkable = false;
+                }
+            }
+            return walkable;
+        }
         public void handle_packets(List<string> packet_splitted, string full_packet)
         {
             string header = packet_splitted[0];
@@ -863,60 +988,59 @@ namespace Multi_Account_Synchronizer
             if (packet_splitted.Count < 5)
                 return;
             //this item belongs to different party
-            if (packet_splitted[1] == "1" && packet_splitted[2] == player.id.ToString() && packet_splitted[4] == "544")
+            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.id.ToString() && packet_splitted[4] == "544")
             {
                 if (CurrentLootId == -1)
                     return;
-                if (scene.LootData.ContainsKey(CurrentLootId))
-                    scene.LootData.Remove(CurrentLootId);
+                if (Scene.LootData.ContainsKey(CurrentLootId))
+                    Scene.LootData.Remove(CurrentLootId);
             }
 
         }
 
         private void handle_su(List<string> packet_splitted, string full_packet)
         {
-            if (packet_splitted[1] == "1" && packet_splitted[2] == player.id.ToString() && packet_splitted[3] == "3")
+            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.id.ToString() && packet_splitted[3] == "3")
             {
-                if (player.map_id == 20001 || KeepDistanceValue == 0 || !KeepDistance || !run)
+                if (Player.map_id == 20001 || KeepDistanceValue == 0 || !KeepDistance || !run)
                     return;
+                Attacked = true;
                 int x;
                 int y;
                 int mobid = LastAttackedMob;
-                var entity = scene.EntityData.Values.Where(ent => ent.Id == mobid).FirstOrDefault();
+                var entity = Scene.EntityData.Values.Where(ent => ent.Id == mobid).FirstOrDefault();
                 if (entity == null)
                 {
-                    x = player.x + random.Next(-1, 2);
-                    y = player.y + random.Next(-1, 2);
-                    phoenixapi.player_walk(x, y);
                 }
                 else
                 {
-                    int atanx = player.x - entity.Pos.X;
-                    int atany = player.y - entity.Pos.Y;
+                    int atanx = Player.x - entity.Pos.X;
+                    int atany = Player.y - entity.Pos.Y;
                     double radian = Math.Atan2(atany, atanx);
                     int cosx = (int)Math.Round(Math.Cos(radian));
                     int sinx = (int)Math.Round(Math.Sin(radian));
-                    x = player.x + cosx;
-                    y = player.y + sinx;
-                    if (Statics.Distance(new Point(player.x, player.y), entity.Pos) >= KeepDistanceValue)
-                    {
-                        if (Stay)
-                            return;
-                        x = player.x + random.Next(-1,2);
-                        y = player.y + random.Next(-1,2);
-                    }
-
-                    phoenixapi.player_walk(x, y);
+                    x = Player.x + cosx;
+                    y = Player.y + sinx;
+                    
                 }
 
             }
         }
 
-        private void handle_us(List<string> packet_splitted, string full_packet)
+        private async void handle_us(List<string> packet_splitted, string full_packet)
         {
             if (packet_splitted[2] != "3")
                 return;
+            Attacked = false;
             LastAttackedMob = int.Parse(packet_splitted[3]);
+            var mob = Scene.EntityData.Values.Where(x => x.Id == LastAttackedMob).FirstOrDefault();
+            if (mob != null)
+            {
+                while (!Attacked && run)
+                    await Task.Delay(10);
+                WalkRangePoint(mob.Pos, KeepDistanceValue);
+
+            }
         }
 
         private async void handle_qnamli2(List<string> packet_splitted, string full_packet)
@@ -925,7 +1049,7 @@ namespace Multi_Account_Synchronizer
             if (full_packet.Contains("#mjoin") && full_packet.Contains(OwnerName))
             {
                 await Task.Delay(DelayGenerator(AcceptInviteDelay));
-                phoenixapi.send_packet(packet_splitted[2]);
+                Api.send_packet(packet_splitted[2]);
             }
                 
         }

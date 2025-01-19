@@ -40,6 +40,8 @@ namespace Multi_Account_Synchronizer
 
             if (api.Item5.InviteCommand != "")
                 InviteCommandsComboBox.SelectedItem = api.Item5.InviteCommand;
+            VokeDelay.Value = api.Item5.VokeDelay;
+            TrashItemsCheckBox.Checked = api.Item5.TrashItems;
         }
 
         private void Settings_Load(object sender, EventArgs e)
@@ -129,6 +131,16 @@ namespace Multi_Account_Synchronizer
         private void InviteCommandsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             apis.ForEach(x => x.Item5.InviteCommand = InviteCommandsComboBox.Text);
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.VokeDelay = ((int)VokeDelay.Value));
+        }
+
+        private void TrashItemsCheckBox_CheckedChanged_1(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.TrashItems = TrashItemsCheckBox.Checked);
         }
     }
 }
