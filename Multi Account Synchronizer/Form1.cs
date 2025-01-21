@@ -59,13 +59,12 @@ namespace Multi_Account_Synchronizer
                 }
                 else
                     this.Close();
-                
-                CheckPorts();
                 timer1.Start();
                 foreach (RoundedButton button in tableLayoutPanel2.Controls.OfType<RoundedButton>())
                 {
                     button.Enabled = true;
                 }
+                CheckPorts();
             }
             catch (Exception a)
             {
@@ -168,6 +167,7 @@ namespace Multi_Account_Synchronizer
                 int index = tableLayoutPanel1.GetRow(c);
                 if (index >= tableLayoutPanel1.RowStyles.Count)
                 {
+                    Console.WriteLine(tableLayoutPanel1.RowStyles.Count);
                     controls.Add(c);
                 }
             }
@@ -208,9 +208,9 @@ namespace Multi_Account_Synchronizer
             handler.bot = bot;
             scene.player = player;
             player.phoenixapi = api;
-            bot.Player = player;
-            bot.Scene = scene;
-            bot.Api = api;
+            bot.player = player;
+            bot.scene = scene;
+            bot.phoenixapi = api;
             api.receive_message();
             handler.start();
             api.query_player_info();
@@ -277,17 +277,14 @@ namespace Multi_Account_Synchronizer
             if (!File.Exists("Members.json"))
                 return;
 
-            while (player.id <= 0 || player.name == "")
+            while (player.id <= 0)
                 await Task.Delay(100);
-            bot.Random = new Random(player.id);
+            bot.random = new Random(player.id);
             JObject Members = new JObject();
             Random random = new Random(player.id);
             RadioButton DPS = b.radioButton1;
             RadioButton Buffer = b.radioButton2;
             RadioButton MinilandOwner = b.radioButton3;
-            CheckBox Otter = b.OttercheckBox;
-            CheckBox Panda = b.PandaCheckBox;
-
             string path = "";
             using (StreamReader file = new StreamReader("Members.json"))
             {
@@ -302,8 +299,11 @@ namespace Multi_Account_Synchronizer
             int useamuletmax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Use Amulet Max", 1450);
             int attackluremin = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Min", 1500);
             int attackluremax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Max", 2100);
+            int delayAfterKillMin = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Min", 400);
+            int delayAfterKillMax = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Max", 850);
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
             int vokeDelay = Statics.JsonGetValueOrDefault(Members["General Settings"], "Voke Delay", 750);
+            int minMobCountVoke = Statics.JsonGetValueOrDefault(Members["General Settings"], "Min Monster Count For Voke", 6);
             bool trashItems = Statics.JsonGetValueOrDefault(Members["General Settings"], "Trash Items", true);
             if (inviteCommand != "" && !Statics.InviteCommands.ContainsKey(inviteCommand))
             {
@@ -313,12 +313,15 @@ namespace Multi_Account_Synchronizer
             Tuple<int, int> exit = new Tuple<int, int>(exitmin, exitmax);
             Tuple<int, int> amulet = new Tuple<int, int>(useamuletmin, useamuletmax);
             Tuple<int, int> attack = new Tuple<int, int>(attackluremin, attackluremax);
+            Tuple<int, int> delayAfterKill = new Tuple<int, int>(delayAfterKillMin, delayAfterKillMax);
             bot.AcceptInviteDelay = invite;
             bot.MinilandExitDelay = exit;
             bot.AmuletUseDelay = amulet;
             bot.StartAttackDelay = attack;
+            bot.DelayAfterKillPoint = delayAfterKill;
             bot.InviteCommand = inviteCommand;
             bot.VokeDelay = vokeDelay;
+            bot.MinVokeMonsterCount = minMobCountVoke;
             bot.TrashItems = trashItems;
             foreach (var member in Members["Members"])
             {
@@ -328,19 +331,12 @@ namespace Multi_Account_Synchronizer
                     DPS.Checked = Statics.JsonGetValueOrDefault(member, "DPS", false);
                     Buffer.Checked = Statics.JsonGetValueOrDefault(member, "Buffer", true);
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
-                    Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
-                    Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
-                        var result = MessageBox.Show($"Profile {path} found in settings for {player.name} do you want to load it?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                        if (result == DialogResult.Yes)
-                        {
-                            b.textBox2.Text = path;
-                            bot.ReadIni(path);
-                            bot.CreateNewIni(path);
-                        }
-                       
+                        b.textBox2.Text = path;
+                        bot.ReadIni(path);
+                        bot.CreateNewIni(path);
                     }
                     foreach (var item in member["buffs"])
                     {
@@ -356,6 +352,7 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
+            timer1.Interval = 250;
             int killpointcount = -1;
             var ab = apis.Where(x => x.Item5.DPS && x.Item5.Path.Count(y => y.Kill) > 0).FirstOrDefault();
             if (ab != null)
@@ -430,11 +427,7 @@ namespace Multi_Account_Synchronizer
 
             apis.ForEach(x => {
                 if (!x.Item5.run)
-                {
-                    
                     x.Item5.AddLog("Bot started", "Information");
-                }
-                    
                 x.Item5.run = true;
                 x.Item1.start_bot();
             });
@@ -489,9 +482,12 @@ namespace Multi_Account_Synchronizer
             generalSettings.Add("Use Amulet Max", a.Item5.AmuletUseDelay.Item2);
             generalSettings.Add("Attack Lure Min", a.Item5.StartAttackDelay.Item1);
             generalSettings.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
+            generalSettings.Add("After Kill Point Min", a.Item5.DelayAfterKillPoint.Item1);
+            generalSettings.Add("After Kill Point Max", a.Item5.DelayAfterKillPoint.Item2);
             generalSettings.Add("Invite Command", a.Item5.InviteCommand);
             generalSettings.Add("Voke Delay", a.Item5.VokeDelay);
             generalSettings.Add("Loot Trash Items", a.Item5.TrashItems);
+            generalSettings.Add("Min Monster Count For Voke", a.Item5.MinVokeMonsterCount);
             content["General Settings"] = generalSettings;
             foreach (var api in apis)
             {
@@ -511,8 +507,6 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
-                newItem.Add("Otter", api.Item5.Otter);
-                newItem.Add("Panda", api.Item5.Panda);
                 newItem.Add("Path", api.Item6.textBox2.Text);
                 newItem["buffs"] = buffs;
                 players.Add(newItem);
@@ -522,7 +516,7 @@ namespace Multi_Account_Synchronizer
             MessageBox.Show("Settings saved!", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private async void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             if (apis.Count <= 0)
                 return;
@@ -536,10 +530,6 @@ namespace Multi_Account_Synchronizer
 
             if (MinilandOwner != null)
             {
-                MinilandOwner.Item3.updated = false;
-                MinilandOwner.Item1.query_inventory();
-                while (!MinilandOwner.Item3.updated)
-                    await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
                 MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS).Select(x => x.Item3.name).ToList();
                 timetobuff = apis.Count(x => x.Item3.map_id == 20001) == apis.Count();
@@ -577,13 +567,16 @@ namespace Multi_Account_Synchronizer
             var vokeAcc = apis.Where(x => x.Item5.DPS && x.Item5.IsVokeReady()).FirstOrDefault();
             if (vokeAcc != null)
             {
-                Console.WriteLine(vokeAcc.Item3.name);
             }
             if (updateVoke && vokeAcc != null)
             {
 
                 vokeAcc.Item5.UpdateVoke = false;
                 vokeAcc.Item5.UseVoke = true;
+            }
+            }
+            }
+            }
             }
             foreach ( var api in apis )
             {
@@ -596,8 +589,6 @@ namespace Multi_Account_Synchronizer
                 api.Item5.LureMob = luremob;
                 api.Item5.StartAttack = startkill;
                 api.Item5.OwnerName = minilandownernick;
-                api.Item5.DelayDifferentKey = differentkeydelay;
-                api.Item5.DelaySameKey = samekeydelay;
                 if (reset)
                 {
                     api.Item5.Minilandsw.Restart();
@@ -605,35 +596,33 @@ namespace Multi_Account_Synchronizer
                 }
                 if (updatemini)
                 {
-                    api.Item5.EnterMini = entermini;
-                    api.Item5.UpdateBuff = false;
-                    
-                }
-                if (updateVoke)
+                if (updateVoke && vokeAcc !=null)
                 {
                     api.Item5.UpdateVoke = false;
                 }
+                }
+                }
+                }
+                }
             }
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void tryingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var map = Statics.LoadMap(1);
+            Console.WriteLine(map.ToString());
+            
         }
 
         private void roundedButton5_Click(object sender, EventArgs e)
         {
             Settings s = new Settings(apis);
             s.ShowDialog();
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (apis.Count(x => x.Item5.run) > 0)
-            {
-                var result = MessageBox.Show("Phoenix Bots might be still running. Would you like to stop them?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                {
-                    apis.ForEach(x => x.Item1.stop_bot());
-                }
-            }
-            
-            
         }
     }
 }
