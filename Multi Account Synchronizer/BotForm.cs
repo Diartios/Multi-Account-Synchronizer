@@ -29,6 +29,7 @@ namespace Multi_Account_Synchronizer
 
         private async void BotForm_Load(object sender, EventArgs e)
         {
+            richTextBox1.ScrollToCaret(); 
             while (player.name == "")
                 await Task.Delay(1);
             this.Text = $"Multi Account Synchronizer - {player.name}";

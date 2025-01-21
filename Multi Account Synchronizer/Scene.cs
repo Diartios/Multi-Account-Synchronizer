@@ -43,6 +43,29 @@ namespace Multi_Account_Synchronizer
 
             return mob_id;
         }
+        public int MonstersInRadius(int x, int y, int radius, bool blacklist, bool whitelist, List<int> monsters)
+        {
+            int count = 0;
+            try
+            {
+                List<Entities> ids = new List<Entities>();
+                foreach (Entities entity in EntityData.Values)
+                {
+                    if (blacklist && monsters.Contains(entity.Vnum))
+                        continue;
+                    if (whitelist && !monsters.Contains(entity.Vnum))
+                        continue;
+                    if (Statics.Distance(new Point(x,y), entity.Pos) > radius)
+                        continue;
+                    count++;
+                }
+                return count;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
         public int CenterMob(int radius, bool blacklist, bool whitelist, List<int> monsters, bool priority)
         {
             int mobid = -1;
