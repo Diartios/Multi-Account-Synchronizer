@@ -208,9 +208,9 @@ namespace Multi_Account_Synchronizer
             handler.bot = bot;
             scene.player = player;
             player.phoenixapi = api;
-            bot.player = player;
-            bot.scene = scene;
-            bot.phoenixapi = api;
+            bot.Player = player;
+            bot.Scene = scene;
+            bot.Api = api;
             api.receive_message();
             handler.start();
             api.query_player_info();
