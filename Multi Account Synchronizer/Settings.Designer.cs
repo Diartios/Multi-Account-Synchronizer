@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.MinilandInviteMax = new System.Windows.Forms.NumericUpDown();
             this.MinilandInviteMin = new System.Windows.Forms.NumericUpDown();
@@ -143,7 +144,7 @@
             // 
             // label1
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(3, 2);
             this.label1.Name = "label1";
@@ -219,7 +220,7 @@
             // 
             // label3
             // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(3, 2);
             this.label3.Name = "label3";
@@ -295,7 +296,7 @@
             // 
             // label5
             // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(3, 2);
             this.label5.Name = "label5";
@@ -324,7 +325,7 @@
             this.tableLayoutPanel4.Controls.Add(this.UseAmuletMin, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.label8, 2, 0);
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(9, 79);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(9, 43);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -371,7 +372,7 @@
             // 
             // label7
             // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(3, 2);
             this.label7.Name = "label7";
@@ -627,6 +628,7 @@
             this.Controls.Add(this.tableLayoutPanel4);
             this.Controls.Add(this.tableLayoutPanel3);
             this.ForeColor = System.Drawing.Color.White;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Settings";
@@ -660,6 +662,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMin)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -53,18 +53,19 @@ namespace Multi_Account_Synchronizer
                 }
                 if (IsConnected)
                 {
-                    
+
                     phoenixapi.Close();
                     await CreatePort(int.Parse(realport), part);
                 }
                 else
                     this.Close();
+
+                CheckPorts();
                 timer1.Start();
                 foreach (RoundedButton button in tableLayoutPanel2.Controls.OfType<RoundedButton>())
                 {
                     button.Enabled = true;
                 }
-                CheckPorts();
             }
             catch (Exception a)
             {
@@ -167,7 +168,6 @@ namespace Multi_Account_Synchronizer
                 int index = tableLayoutPanel1.GetRow(c);
                 if (index >= tableLayoutPanel1.RowStyles.Count)
                 {
-                    Console.WriteLine(tableLayoutPanel1.RowStyles.Count);
                     controls.Add(c);
                 }
             }
@@ -277,14 +277,17 @@ namespace Multi_Account_Synchronizer
             if (!File.Exists("Members.json"))
                 return;
 
-            while (player.id <= 0)
+            while (player.id <= 0 || player.name == "")
                 await Task.Delay(100);
-            bot.random = new Random(player.id);
+            bot.Random = new Random(player.id);
             JObject Members = new JObject();
             Random random = new Random(player.id);
             RadioButton DPS = b.radioButton1;
             RadioButton Buffer = b.radioButton2;
             RadioButton MinilandOwner = b.radioButton3;
+            CheckBox Otter = b.OttercheckBox;
+            CheckBox Panda = b.PandaCheckBox;
+
             string path = "";
             using (StreamReader file = new StreamReader("Members.json"))
             {
@@ -309,7 +312,7 @@ namespace Multi_Account_Synchronizer
             {
                 inviteCommand = "";
             }
-            Tuple<int,int> invite = new Tuple<int,int>(invitemin, invitemax);
+            Tuple<int, int> invite = new Tuple<int, int>(invitemin, invitemax);
             Tuple<int, int> exit = new Tuple<int, int>(exitmin, exitmax);
             Tuple<int, int> amulet = new Tuple<int, int>(useamuletmin, useamuletmax);
             Tuple<int, int> attack = new Tuple<int, int>(attackluremin, attackluremax);
@@ -331,12 +334,19 @@ namespace Multi_Account_Synchronizer
                     DPS.Checked = Statics.JsonGetValueOrDefault(member, "DPS", false);
                     Buffer.Checked = Statics.JsonGetValueOrDefault(member, "Buffer", true);
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
+                    Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
+                    Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
-                        b.textBox2.Text = path;
-                        bot.ReadIni(path);
-                        bot.CreateNewIni(path);
+                        var result = MessageBox.Show($"Profile {path} found in settings for {player.name} do you want to load it?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (result == DialogResult.Yes)
+                        {
+                            b.textBox2.Text = path;
+                            bot.ReadIni(path);
+                            bot.CreateNewIni(path);
+                        }
+
                     }
                     foreach (var item in member["buffs"])
                     {
@@ -366,7 +376,7 @@ namespace Multi_Account_Synchronizer
                     allinvitestext += $"{invite.Value}={invite.Key}, ";
                 }
                 allinvitestext = allinvitestext.Remove(allinvitestext.Length - 2);
-                MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}", "WARNING", MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else if (apis.Count(x => x.Item5.Path.Count(a => a.Kill) != killpointcount && x.Item5.DPS) > 0 && killpointcount != -1)
@@ -386,7 +396,7 @@ namespace Multi_Account_Synchronizer
                         points = points.Remove(points.Length - 1);
                         points += $" points count {item.Item5.Path.Count(x => x.Kill)}";
                     }
-                        
+
 
                     points += "\n";
                 }
@@ -427,7 +437,11 @@ namespace Multi_Account_Synchronizer
 
             apis.ForEach(x => {
                 if (!x.Item5.run)
+                {
+
                     x.Item5.AddLog("Bot started", "Information");
+                }
+
                 x.Item5.run = true;
                 x.Item1.start_bot();
             });
@@ -447,7 +461,7 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton3_Click(object sender, EventArgs e)
         {
-               
+
 
             AddPortForm addPortForm = new AddPortForm();
             foreach (Label l in tableLayoutPanel1.Controls.OfType<Label>())
@@ -507,6 +521,8 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
+                newItem.Add("Otter", api.Item5.Otter);
+                newItem.Add("Panda", api.Item5.Panda);
                 newItem.Add("Path", api.Item6.textBox2.Text);
                 newItem["buffs"] = buffs;
                 players.Add(newItem);
@@ -516,7 +532,7 @@ namespace Multi_Account_Synchronizer
             MessageBox.Show("Settings saved!", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             if (apis.Count <= 0)
                 return;
@@ -530,6 +546,10 @@ namespace Multi_Account_Synchronizer
 
             if (MinilandOwner != null)
             {
+                MinilandOwner.Item3.updated = false;
+                MinilandOwner.Item1.query_inventory();
+                while (!MinilandOwner.Item3.updated)
+                    await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
                 MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS).Select(x => x.Item3.name).ToList();
                 timetobuff = apis.Count(x => x.Item3.map_id == 20001) == apis.Count();
@@ -538,13 +558,13 @@ namespace Multi_Account_Synchronizer
                 minilandownernick = MinilandOwner.Item3.name;
                 entermini = apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
             }
-            
+
             bool updatemini = apis.Count(x => x.Item5.UpdateBuff && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
 
             bool gonextlure = apis.Count(x => x.Item5.Finished && x.Item5.DPS) == apis.Count(x => x.Item5.DPS);
             bool startkill = apis.Count(x => x.Item5.DPS && x.Item5.ReachedKillPoint) == apis.Count(x => x.Item5.DPS);
-            List<int> luremobs = apis.Where(x => x.Item5.DPS).Select(x => x.Item4.CenterMob(x.Item5.AttackSearchRadius,x.Item5.AttackBlacklist,x.Item5.AttackWhitelist,x.Item5.MonsterList, x.Item5.Priority)).ToList();
-            bool reset = apis.Count(x => x.Item5.DPS && x.Item5.ResetMinilandsw && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled) && apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled) > 0; 
+            List<int> luremobs = apis.Where(x => x.Item5.DPS).Select(x => x.Item4.CenterMob(x.Item5.AttackSearchRadius, x.Item5.AttackBlacklist, x.Item5.AttackWhitelist, x.Item5.MonsterList, x.Item5.Priority)).ToList();
+            bool reset = apis.Count(x => x.Item5.DPS && x.Item5.ResetMinilandsw && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled) && apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled) > 0;
             int luremob = -1;
             if (luremobs.Count(x => x > 0) > 0)
                 luremob = luremobs.Where(x => x > 0).FirstOrDefault();
@@ -574,11 +594,7 @@ namespace Multi_Account_Synchronizer
                 vokeAcc.Item5.UpdateVoke = false;
                 vokeAcc.Item5.UseVoke = true;
             }
-            }
-            }
-            }
-            }
-            foreach ( var api in apis )
+            foreach (var api in apis)
             {
                 api.Item5.DefenceMob = defencemob;
                 api.Item5.HelpAmulet = HelpAmulet;
@@ -589,6 +605,8 @@ namespace Multi_Account_Synchronizer
                 api.Item5.LureMob = luremob;
                 api.Item5.StartAttack = startkill;
                 api.Item5.OwnerName = minilandownernick;
+                api.Item5.DelayDifferentKey = differentkeydelay;
+                api.Item5.DelaySameKey = samekeydelay;
                 if (reset)
                 {
                     api.Item5.Minilandsw.Restart();
@@ -598,35 +616,33 @@ namespace Multi_Account_Synchronizer
                 {
                     api.Item5.EnterMini = entermini;
                     api.Item5.UpdateBuff = false;
-                    
+
                 }
-                if (updateVoke && vokeAcc !=null)
+                if (updateVoke && vokeAcc != null)
                 {
                     api.Item5.UpdateVoke = false;
                 }
-                }
-                }
-                }
-                }
             }
-        }
-
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void tryingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var map = Statics.LoadMap(1);
-            Console.WriteLine(map.ToString());
-            
         }
 
         private void roundedButton5_Click(object sender, EventArgs e)
         {
             Settings s = new Settings(apis);
             s.ShowDialog();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (apis.Count(x => x.Item5.run) > 0)
+            {
+                var result = MessageBox.Show("Phoenix Bots might be still running. Would you like to stop them?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    apis.ForEach(x => x.Item1.stop_bot());
+                }
+            }
+
+
         }
     }
 }
