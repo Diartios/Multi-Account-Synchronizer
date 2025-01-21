@@ -55,7 +55,7 @@ namespace Multi_Account_Synchronizer
                         continue;
                     if (whitelist && !monsters.Contains(entity.Vnum))
                         continue;
-                    if (Statics.Distance(new Point(x,y), entity.Pos) > radius)
+                    if (Statics.Distance(new Point(x, y), entity.Pos) > radius)
                         continue;
                     count++;
                 }
@@ -97,8 +97,8 @@ namespace Multi_Account_Synchronizer
                 {
                     int indexnew = monsters.IndexOf(entity.Vnum);
                     int indexold = monsters.IndexOf(vnum);
-                    
-                    
+
+
                     double distance = Math.Sqrt(Math.Pow(totalx - entity.Pos.X, 2) + Math.Pow(totaly - entity.Pos.Y, 2));
                     if ((indexnew < indexold || indexold == -1) && priority)
                     {
@@ -147,7 +147,7 @@ namespace Multi_Account_Synchronizer
                     continue;
                 if (!owners.Contains(loot.Owner))
                     continue;
-                double distance = Statics.Distance(new Point(player.x,player.y), loot.Pos);
+                double distance = Statics.Distance(new Point(player.x, player.y), loot.Pos);
                 if (distance < maxdistance)
                 {
                     maxdistance = distance;
@@ -219,7 +219,7 @@ namespace Multi_Account_Synchronizer
             Point position = new Point(x, y);
             Loot loot = new Loot(vnum, id, position, quantity, owner, DateTime.Now);
             LootData[id] = loot;
-            
+
         }
         public void handle_die(List<string> packet_splitted, string full_packet)
         {
@@ -239,7 +239,7 @@ namespace Multi_Account_Synchronizer
                 {
                     EntityData.Remove(id1);
                 }
-                   
+
             }
             catch (Exception)
             {
@@ -292,8 +292,8 @@ namespace Multi_Account_Synchronizer
                 {
                     int attackerid = int.Parse(packet_splitted[2]);
                     Entities entities = new Entities { Id = attackerid, LastAttack = DateTime.Now };
-                    LastAttacks[attackerid] = entities; 
-                    
+                    LastAttacks[attackerid] = entities;
+
                 }
             }
             catch (Exception)

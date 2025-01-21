@@ -29,7 +29,7 @@ namespace Multi_Account_Synchronizer
 
         private async void BotForm_Load(object sender, EventArgs e)
         {
-            richTextBox1.ScrollToCaret(); 
+            richTextBox1.ScrollToCaret();
             while (player.name == "")
                 await Task.Delay(1);
             this.Text = $"Multi Account Synchronizer - {player.name}";
@@ -102,7 +102,7 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton3_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Choose the phoenix bot profile that you use and want to sync", "INFO",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            MessageBox.Show("Choose the phoenix bot profile that you use and want to sync", "INFO", MessageBoxButtons.OK, MessageBoxIcon.Information);
             OpenFileDialog o = new OpenFileDialog();
             o.Title = "Open file";
             o.Filter = "INI files|*.ini";
@@ -127,7 +127,7 @@ namespace Multi_Account_Synchronizer
                     player.Pet.Skills[663] = true;
                 }
             }
-                
+
             bot.Otter = OttercheckBox.Checked;
         }
 
@@ -142,10 +142,10 @@ namespace Multi_Account_Synchronizer
                     player.Pet.Skills.Clear();
                     player.Pet.Skills[1714] = true;
                 }
-                
-                
+
+
             }
-                
+
             bot.Panda = PandaCheckBox.Checked;
         }
     }
