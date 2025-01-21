@@ -614,19 +614,6 @@ namespace Multi_Account_Synchronizer
             }
             return count;
         }
-        private int VokeMonsterCount()
-        {
-            int count = 0;
-            if (Otter)
-            {
-                count = Multi_Account_Synchronizer.Scene.MonstersInRadius(Multi_Account_Synchronizer.Player.Pet.X, Multi_Account_Synchronizer.Player.Pet.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList);
-            }
-            else if (Panda && Multi_Account_Synchronizer.Scene.EntityData.ContainsKey(LureMob))
-            {
-                count = Multi_Account_Synchronizer.Scene.MonstersInRadius(Multi_Account_Synchronizer.Scene.EntityData[LureMob].Pos.X, Multi_Account_Synchronizer.Scene.EntityData[LureMob].Pos.Y,6, AttackBlacklist, AttackWhitelist, MonsterList);
-            }
-            return count;
-        }
         private async Task MinilandDPS()
         {
             if (!run)

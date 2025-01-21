@@ -241,5 +241,26 @@ namespace Multi_Account_Synchronizer
             DelayAfterKillMin.Maximum = DelayAfterKillMax.Value;
             apis.ForEach(x => x.Item5.DelayAfterKillPoint = new Tuple<int, int>(((int)DelayAfterKillMin.Value), ((int)DelayAfterKillMax.Value)));
         }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.MinVokeMonsterCount = ((int)MinMonsterCountVoke.Value));
+        }
+
+        private void numericUpDown2_ValueChanged_1(object sender, EventArgs e)
+        {
+            if (!DelayAfterKillMin.Enabled)
+                return;
+            DelayAfterKillMax.Minimum = DelayAfterKillMin.Value;
+            apis.ForEach(x => x.Item5.DelayAfterKillPoint = new Tuple<int,int>(((int)DelayAfterKillMin.Value), ((int)DelayAfterKillMax.Value)));
+        }
+
+        private void DelayAfterKillMax_ValueChanged(object sender, EventArgs e)
+        {
+            if (!DelayAfterKillMax.Enabled)
+                return;
+            DelayAfterKillMin.Maximum = DelayAfterKillMax.Value;
+            apis.ForEach(x => x.Item5.DelayAfterKillPoint = new Tuple<int, int>(((int)DelayAfterKillMin.Value), ((int)DelayAfterKillMax.Value)));
+        }
     }
 }
