@@ -596,6 +596,10 @@ namespace Multi_Account_Synchronizer
                 }
                 if (updatemini)
                 {
+                    api.Item5.EnterMini = entermini;
+                    api.Item5.UpdateBuff = false;
+                    
+                }
                 if (updateVoke && vokeAcc !=null)
                 {
                     api.Item5.UpdateVoke = false;

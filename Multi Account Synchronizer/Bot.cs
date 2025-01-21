@@ -267,7 +267,12 @@ namespace Multi_Account_Synchronizer
                         {
                             AddLog("Waiting for respawn", "Bot");
                         }
-                        while (WaitRespawn && Multi_Account_Synchronizer.Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
+                        //wait respawn
+                        if (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
+                        {
+                            AddLog("Waiting for respawn", "Bot");
+                        }
+                        while (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
                             await Task.Delay(100);
                         if (!run)
                         {
@@ -576,7 +581,7 @@ namespace Multi_Account_Synchronizer
                         {
                             
                             
-                            if (Statics.Distance(mob.Pos, new Point(Multi_Account_Synchronizer.Player.Pet.X, Multi_Account_Synchronizer.Player.Pet.Y)) <= Math.Sqrt(2) && VokeMonsterCount() >= MinVokeMonsterCount)
+                            if (Statics.Distance(mob.Pos, new Point(Player.Pet.X,Player.Pet.Y)) <= Math.Sqrt(2) && VokeMonsterCount() >= MinVokeMonsterCount)
                             {
                                 Api.use_pet_skill(LureMob, 663);
                             }
@@ -595,6 +600,19 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
+        }
+        private int VokeMonsterCount()
+        {
+            int count = 0;
+            if (Otter)
+            {
+                count = Scene.MonstersInRadius(Player.Pet.X, Player.Pet.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList);
+            }
+            else if (Panda && Scene.EntityData.ContainsKey(LureMob))
+            {
+                count = Scene.MonstersInRadius(Scene.EntityData[LureMob].Pos.X, Scene.EntityData[LureMob].Pos.Y,6, AttackBlacklist, AttackWhitelist, MonsterList);
+            }
+            return count;
         }
         private int VokeMonsterCount()
         {
