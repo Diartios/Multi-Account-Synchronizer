@@ -628,7 +628,7 @@ namespace Multi_Account_Synchronizer
                     {
                         Api.use_pet_skill(LureMob, 1714);
                     }
-                    if (Otter && IsVokeReady())
+                    if (Otter && IsVokeReady() && Scene.MonstersInRadius(Player.x,Player.y,AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList) >= MinVokeMonsterCount)
                     {
                         var mob = Scene.EntityData.Values.Where(x => x.Id == LureMob).FirstOrDefault();
                         if (mob != null)
