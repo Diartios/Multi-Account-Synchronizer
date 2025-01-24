@@ -45,6 +45,7 @@ namespace Multi_Account_Synchronizer
                 InviteCommandsComboBox.SelectedItem = api.Item5.InviteCommand;
             VokeDelay.Value = api.Item5.VokeDelay;
             MinMonsterCountVoke.Value = api.Item5.MinVokeMonsterCount;
+            StopAfterMinutes.Value = api.Item5.StopAfterMin;
             TrashItemsCheckBox.Checked = api.Item5.TrashItems;
         }
 
@@ -166,6 +167,11 @@ namespace Multi_Account_Synchronizer
                 return;
             DelayAfterKillMin.Maximum = DelayAfterKillMax.Value;
             apis.ForEach(x => x.Item5.DelayAfterKillPoint = new Tuple<int, int>(((int)DelayAfterKillMin.Value), ((int)DelayAfterKillMax.Value)));
+        }
+
+        private void StopAfterMinutes_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.StopAfterMin = ((int)StopAfterMinutes.Value));
         }
     }
 }

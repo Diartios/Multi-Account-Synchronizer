@@ -24,15 +24,25 @@ namespace Multi_Account_Synchronizer
             scene = s;
             InitializeComponent();
             bot.richTextBox1 = this.richTextBox1;
+            Run();
+        }
+
+        private async void Run()
+        {
+            while (player.name == "")
+                await Task.Delay(1);
+            while (true)
+            {
+                this.Text = $"{player.name} | Working time: {bot.WorkingTimeSw.Elapsed.ToString(@"hh\:mm\:ss")}";
+                await Task.Delay(500);
+            }
+            
         }
 
 
         private async void BotForm_Load(object sender, EventArgs e)
         {
             richTextBox1.ScrollToCaret();
-            while (player.name == "")
-                await Task.Delay(1);
-            this.Text = $"Multi Account Synchronizer - {player.name}";
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)

@@ -173,6 +173,8 @@ namespace Multi_Account_Synchronizer
                 int addchance = rnd.Next(0, 4);
                 if (!trashitems)
                     addchance = 69;
+                else if (lootlist.Count == 1 && lootlist.Contains(1086) && whitelist)
+                    addchance = 31;
                 if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > Math.Sqrt(2))
                     continue;
                 if (blacklist && lootlist.Contains(loot.Vnum) && addchance != 0)

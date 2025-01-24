@@ -137,6 +137,9 @@ namespace Multi_Account_Synchronizer
         public Tuple<int, int> AcceptInviteDelay = new Tuple<int, int>(1000, 2000);
         public Tuple<int, int> DelayAfterKillPoint = new Tuple<int, int>(450, 850);
         public int VokeDelay = 750;
+        public Stopwatch WorkingTimeSw = new Stopwatch();
+        public int StopAfterMin = 0;
+        public bool ShouldStop = false;
         #endregion
         public Bot()
         {
@@ -219,6 +222,7 @@ namespace Multi_Account_Synchronizer
         public void Start()
         {
             Api.start_bot();
+            WorkingTimeSw.Restart();
         }
         public void Stop()
         {
@@ -226,8 +230,10 @@ namespace Multi_Account_Synchronizer
             Finished = false;
             UpdateBuff = false;
             EnterMini = false;
+            ShouldStop = false;
             WaitingForMiniland = false;
             Api.stop_bot();
+            WorkingTimeSw.Reset();
             LureMob = -1;
         }
         private int DelayGenerator(Tuple<int, int> range)
@@ -265,7 +271,11 @@ namespace Multi_Account_Synchronizer
                                 Stop();
                                 break;
                             }
-                            if (EnterMini)
+                            if (ShouldStop)
+                            {
+                                await MinilandStopDPS();
+                            }
+                            else if (EnterMini)
                             {
                                 await MinilandDPS();
                             }
@@ -320,7 +330,11 @@ namespace Multi_Account_Synchronizer
                                     Stop();
                                     break;
                                 }
-                                if (EnterMini)
+                                if (ShouldStop)
+                                {
+                                    await MinilandStopDPS();
+                                }
+                                else if (EnterMini)
                                 {
                                     await MinilandDPS();
                                 }
@@ -719,12 +733,54 @@ namespace Multi_Account_Synchronizer
 
             await LeaveMini();
         }
+        private async Task MinilandStopDPS()
+        {
+            if (!run)
+            {
+                Stop();
+                return;
+            }
+            WaitingForMiniland = true;
+            AddLog("Going to Miniland", "Miniland Stop DPS");
+            map_changed = false;
+            while (Player.map_id != 20001 && !map_changed && run)
+                await Task.Delay(100);
+            if (!run)
+            {
+                WaitingForMiniland = false;
+                Stop();
+                return;
+            }
+            if (Player.map_id != 20001)
+            {
+                WaitingForMiniland = false;
+                return;
+            }
+            AddLog("Entered Miniland", "Miniland Stop DPS");
+            while (!StartBuff && run)
+                await Task.Delay(100);
+            WaitingForMiniland = false;
+            await Task.Delay(5000);
+            AddLog("Bot stopped", "Information");
+            run = false;
+            Stop();
+
+        }
         private async Task MinilandAccount()
         {
             while (!StartBuff && run)
                 await Task.Delay(100);
+            if (ShouldStop)
+            {
+                AddLog("Bot stopped", "Information");
+                run = false;
+            }
             if (!run)
+            {
+                Stop();
                 return;
+            }
+                
             await UseBuff();
             await Task.Delay(30000);
         }
@@ -733,7 +789,11 @@ namespace Multi_Account_Synchronizer
             while (!Invite && run)
                 await Task.Delay(100);
             if (!run)
+            {
+                Stop();
                 return;
+            }
+                
             foreach (string account in DPSAccounts)
             {
                 if (InviteCommand == "")
@@ -742,10 +802,19 @@ namespace Multi_Account_Synchronizer
                 Api.send_packet($"${InviteCommand} {account}");
                 await Task.Delay(1000);
             }
+            if (ShouldStop)
+            {
+                AddLog("Bot stopped", "Information");
+                run = false;
+            }
             while (!StartBuff && run)
                 await Task.Delay(100);
             if (!run)
+            {
+                Stop();
                 return;
+            }
+               
             await UseBuff();
         }
         private async Task UseBuff()

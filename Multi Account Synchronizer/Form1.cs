@@ -443,7 +443,7 @@ namespace Multi_Account_Synchronizer
                 }
 
                 x.Item5.run = true;
-                x.Item1.start_bot();
+                x.Item5.Start();
             });
         }
 
@@ -560,7 +560,7 @@ namespace Multi_Account_Synchronizer
             }
 
             bool updatemini = apis.Count(x => x.Item5.UpdateBuff && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
-
+            bool shouldStop = apis.Count(x => x.Item5.DPS && x.Item5.StopAfterMin > 0 && x.Item5.WorkingTimeSw.Elapsed.TotalMinutes >= x.Item5.StopAfterMin) > 0 && entermini;
             bool gonextlure = apis.Count(x => x.Item5.Finished && x.Item5.DPS) == apis.Count(x => x.Item5.DPS);
             bool startkill = apis.Count(x => x.Item5.DPS && x.Item5.ReachedKillPoint) == apis.Count(x => x.Item5.DPS);
             List<int> luremobs = apis.Where(x => x.Item5.DPS).Select(x => x.Item4.CenterMob(x.Item5.AttackSearchRadius, x.Item5.AttackBlacklist, x.Item5.AttackWhitelist, x.Item5.MonsterList, x.Item5.Priority)).ToList();
@@ -607,6 +607,7 @@ namespace Multi_Account_Synchronizer
                 api.Item5.OwnerName = minilandownernick;
                 api.Item5.DelayDifferentKey = differentkeydelay;
                 api.Item5.DelaySameKey = samekeydelay;
+                api.Item5.ShouldStop = shouldStop;
                 if (reset)
                 {
                     api.Item5.Minilandsw.Restart();
