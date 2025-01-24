@@ -64,6 +64,9 @@
             this.DelayAfterKillMin = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.StopAfterMinutes = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMin)).BeginInit();
@@ -84,6 +87,8 @@
             this.tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMin)).BeginInit();
+            this.tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StopAfterMinutes)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -612,12 +617,52 @@
             this.label13.TabIndex = 48;
             this.label13.Text = "~";
             // 
+            // tableLayoutPanel9
+            // 
+            this.tableLayoutPanel9.ColumnCount = 2;
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel9.Controls.Add(this.StopAfterMinutes, 1, 0);
+            this.tableLayoutPanel9.Controls.Add(this.label14, 0, 0);
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(261, 149);
+            this.tableLayoutPanel9.Name = "tableLayoutPanel9";
+            this.tableLayoutPanel9.RowCount = 1;
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(249, 30);
+            this.tableLayoutPanel9.TabIndex = 53;
+            // 
+            // StopAfterMinutes
+            // 
+            this.StopAfterMinutes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.StopAfterMinutes.Location = new System.Drawing.Point(102, 5);
+            this.StopAfterMinutes.Maximum = new decimal(new int[] {
+            1874919423,
+            2328306,
+            0,
+            0});
+            this.StopAfterMinutes.Name = "StopAfterMinutes";
+            this.StopAfterMinutes.Size = new System.Drawing.Size(144, 20);
+            this.StopAfterMinutes.TabIndex = 47;
+            this.StopAfterMinutes.ValueChanged += new System.EventHandler(this.StopAfterMinutes_ValueChanged);
+            // 
+            // label14
+            // 
+            this.label14.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(3, 2);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(57, 26);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "Stop After Minutes:";
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(518, 180);
+            this.Controls.Add(this.tableLayoutPanel9);
             this.Controls.Add(this.tableLayoutPanel8);
             this.Controls.Add(this.tableLayoutPanel7);
             this.Controls.Add(this.TrashItemsCheckBox);
@@ -661,6 +706,9 @@
             this.tableLayoutPanel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMin)).EndInit();
+            this.tableLayoutPanel9.ResumeLayout(false);
+            this.tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StopAfterMinutes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -703,5 +751,8 @@
         public System.Windows.Forms.NumericUpDown DelayAfterKillMin;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
+        public System.Windows.Forms.NumericUpDown StopAfterMinutes;
+        private System.Windows.Forms.Label label14;
     }
 }
