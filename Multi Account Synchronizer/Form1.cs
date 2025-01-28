@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Compression;
+using System.Diagnostics;
+using IniParser.Model;
 
 namespace Multi_Account_Synchronizer
 {
@@ -60,18 +62,42 @@ namespace Multi_Account_Synchronizer
                 else
                     this.Close();
 
-                CheckPorts();
+                await CheckPorts();
                 timer1.Start();
                 foreach (RoundedButton button in tableLayoutPanel2.Controls.OfType<RoundedButton>())
                 {
                     button.Enabled = true;
                 }
+                AskDisconnectSecurity();
             }
             catch (Exception a)
             {
                 MessageBox.Show(a.Message);
                 this.Close();
             }
+        }
+        private async void AskDisconnectSecurity()
+        {
+            var result = MessageBox.Show("Would you like to enable disconnect security for buff accounts?\nOptions will be enabled:Sound, flash, message box, discord notification.", "Disconnect Secuirty", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No)
+                return;
+            IniData data = new IniData();
+            data["disconnect_security"]["make_sound"] = "true";
+            data["disconnect_security"]["flash"] = "true";
+            data["disconnect_security"]["message_box"] = "true";
+            data["disconnect_security"]["discord"] = "true";
+            data["Security"]["security_enabled"] = "true";
+            string path = $"{Application.StartupPath}\\disconnect.ini";
+            File.WriteAllText(path, data.ToString());
+            foreach (var api in apis)
+            {
+                if (!api.Item5.MinilandOwner && !api.Item5.Buffer)
+                    continue;
+                api.Item1.load_settings(path);
+            }
+            await Task.Delay(5000);
+            if (File.Exists(path))
+                File.Delete(path);
         }
         private async Task CheckPorts()
         {
@@ -271,6 +297,7 @@ namespace Multi_Account_Synchronizer
             UpdateRows();
             //tabControl1.TabPages.Add(tabpage);
             await UpdateRoles(bot, player, handler, scene, api, b);
+            Settings s = new Settings(apis, false);
         }
         private async Task UpdateRoles(Bot bot, Player player, JsonHandler jsonhandler, Scene scene, PhoenixApi api, BotForm b)
         {
@@ -304,6 +331,8 @@ namespace Multi_Account_Synchronizer
             int attackluremax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Max", 2100);
             int delayAfterKillMin = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Min", 400);
             int delayAfterKillMax = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Max", 850);
+            int normalFlower = Statics.JsonGetValueOrDefault(Members["General Settings"], "Normal Flower", 420);
+            int strongFlower = Statics.JsonGetValueOrDefault(Members["General Settings"], "Strong Flower", 40);
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
             int vokeDelay = Statics.JsonGetValueOrDefault(Members["General Settings"], "Voke Delay", 750);
             int minMobCountVoke = Statics.JsonGetValueOrDefault(Members["General Settings"], "Min Monster Count For Voke", 6);
@@ -323,6 +352,8 @@ namespace Multi_Account_Synchronizer
             bot.StartAttackDelay = attack;
             bot.DelayAfterKillPoint = delayAfterKill;
             bot.InviteCommand = inviteCommand;
+            bot.NormalFlowerUsage = normalFlower;
+            bot.StrongFlowerUsage = strongFlower;
             bot.VokeDelay = vokeDelay;
             bot.MinVokeMonsterCount = minMobCountVoke;
             bot.TrashItems = trashItems;
@@ -498,6 +529,8 @@ namespace Multi_Account_Synchronizer
             generalSettings.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
             generalSettings.Add("After Kill Point Min", a.Item5.DelayAfterKillPoint.Item1);
             generalSettings.Add("After Kill Point Max", a.Item5.DelayAfterKillPoint.Item2);
+            generalSettings.Add("Normal Flower", a.Item5.NormalFlowerUsage);
+            generalSettings.Add("Strong Flower", a.Item5.StrongFlowerUsage);
             generalSettings.Add("Invite Command", a.Item5.InviteCommand);
             generalSettings.Add("Voke Delay", a.Item5.VokeDelay);
             generalSettings.Add("Loot Trash Items", a.Item5.TrashItems);
@@ -548,12 +581,13 @@ namespace Multi_Account_Synchronizer
             {
                 MinilandOwner.Item3.updated = false;
                 MinilandOwner.Item1.query_inventory();
-                while (!MinilandOwner.Item3.updated)
+                Stopwatch sw = Stopwatch.StartNew();
+                while (!MinilandOwner.Item3.updated && sw.Elapsed.TotalSeconds <= 5)
                     await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
-                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS).Select(x => x.Item3.name).ToList();
+                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS && x.Item5.MiniEnabled).Select(x => x.Item3.name).ToList();
                 timetobuff = apis.Count(x => x.Item3.map_id == 20001) == apis.Count();
-                invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS);
+                invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
                 leavemini = apis.Count(x => x.Item5.Buffing) == 0;
                 minilandownernick = MinilandOwner.Item3.name;
                 entermini = apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);

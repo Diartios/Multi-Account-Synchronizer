@@ -67,6 +67,11 @@
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.StopAfterMinutes = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
+            this.label16 = new System.Windows.Forms.Label();
+            this.NormalFlower = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.StrongFlower = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinilandInviteMin)).BeginInit();
@@ -89,6 +94,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.DelayAfterKillMin)).BeginInit();
             this.tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StopAfterMinutes)).BeginInit();
+            this.tableLayoutPanel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NormalFlower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StrongFlower)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -446,7 +454,7 @@
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel6.Controls.Add(this.VokeDelay, 1, 0);
             this.tableLayoutPanel6.Controls.Add(this.label10, 0, 0);
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(9, 113);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(261, 149);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -489,7 +497,7 @@
             this.TrashItemsCheckBox.AutoSize = true;
             this.TrashItemsCheckBox.Checked = true;
             this.TrashItemsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TrashItemsCheckBox.Location = new System.Drawing.Point(9, 151);
+            this.TrashItemsCheckBox.Location = new System.Drawing.Point(9, 198);
             this.TrashItemsCheckBox.Name = "TrashItemsCheckBox";
             this.TrashItemsCheckBox.Size = new System.Drawing.Size(105, 17);
             this.TrashItemsCheckBox.TabIndex = 50;
@@ -504,7 +512,7 @@
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel7.Controls.Add(this.MinMonsterCountVoke, 1, 0);
             this.tableLayoutPanel7.Controls.Add(this.label11, 0, 0);
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(264, 113);
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(9, 149);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 1;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -624,7 +632,7 @@
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel9.Controls.Add(this.StopAfterMinutes, 1, 0);
             this.tableLayoutPanel9.Controls.Add(this.label14, 0, 0);
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(261, 149);
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(261, 113);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
             this.tableLayoutPanel9.RowCount = 1;
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -656,12 +664,89 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "Stop After Minutes:";
             // 
+            // tableLayoutPanel10
+            // 
+            this.tableLayoutPanel10.ColumnCount = 4;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel10.Controls.Add(this.label16, 2, 0);
+            this.tableLayoutPanel10.Controls.Add(this.NormalFlower, 1, 0);
+            this.tableLayoutPanel10.Controls.Add(this.label15, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.StrongFlower, 3, 0);
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(9, 111);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 1;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(249, 30);
+            this.tableLayoutPanel10.TabIndex = 54;
+            // 
+            // label16
+            // 
+            this.label16.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(168, 8);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(9, 13);
+            this.label16.TabIndex = 49;
+            this.label16.Text = "|";
+            // 
+            // NormalFlower
+            // 
+            this.NormalFlower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.NormalFlower.Location = new System.Drawing.Point(102, 5);
+            this.NormalFlower.Maximum = new decimal(new int[] {
+            1874919423,
+            2328306,
+            0,
+            0});
+            this.NormalFlower.Name = "NormalFlower";
+            this.NormalFlower.Size = new System.Drawing.Size(56, 20);
+            this.NormalFlower.TabIndex = 47;
+            this.NormalFlower.Value = new decimal(new int[] {
+            420,
+            0,
+            0,
+            0});
+            this.NormalFlower.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged_2);
+            // 
+            // label15
+            // 
+            this.label15.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(3, 2);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(86, 26);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "Normal | Strong Flower Seconds:";
+            // 
+            // StrongFlower
+            // 
+            this.StrongFlower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.StrongFlower.Location = new System.Drawing.Point(188, 5);
+            this.StrongFlower.Maximum = new decimal(new int[] {
+            1874919423,
+            2328306,
+            0,
+            0});
+            this.StrongFlower.Name = "StrongFlower";
+            this.StrongFlower.Size = new System.Drawing.Size(58, 20);
+            this.StrongFlower.TabIndex = 48;
+            this.StrongFlower.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.StrongFlower.ValueChanged += new System.EventHandler(this.StrongFlower_ValueChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(518, 180);
+            this.ClientSize = new System.Drawing.Size(518, 227);
+            this.Controls.Add(this.tableLayoutPanel10);
             this.Controls.Add(this.tableLayoutPanel9);
             this.Controls.Add(this.tableLayoutPanel8);
             this.Controls.Add(this.tableLayoutPanel7);
@@ -709,6 +794,10 @@
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StopAfterMinutes)).EndInit();
+            this.tableLayoutPanel10.ResumeLayout(false);
+            this.tableLayoutPanel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NormalFlower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StrongFlower)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -754,5 +843,10 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
         public System.Windows.Forms.NumericUpDown StopAfterMinutes;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
+        private System.Windows.Forms.Label label16;
+        public System.Windows.Forms.NumericUpDown NormalFlower;
+        private System.Windows.Forms.Label label15;
+        public System.Windows.Forms.NumericUpDown StrongFlower;
     }
 }
