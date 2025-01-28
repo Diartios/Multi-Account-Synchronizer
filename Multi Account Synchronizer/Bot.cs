@@ -61,7 +61,8 @@ namespace Multi_Account_Synchronizer
 
 
         public bool Attacked = false;
-
+        public bool GoKite = false;
+        public Entities KiteMob = null;
 
         int[][] CurrentMap = Statics.LoadMap(-1);
         int LastLoadedMap = -1;
@@ -119,6 +120,8 @@ namespace Multi_Account_Synchronizer
         public bool IgnoreItem = false;
         public int IgnoreTıme = 30;
         public bool IgnoreFlower = false;
+        public int NormalFlowerUsage = 420;
+        public int StrongFlowerUsage = 40;
         public List<int> LootList = new List<int>();
         private int CurrentLootId = -1;
         public bool TrashItems = true;
@@ -264,7 +267,8 @@ namespace Multi_Account_Synchronizer
                         if (i == 0 && Minilandsw.Elapsed.TotalSeconds == 0 && MiniEnabled || i == 0 && Minilandsw.Elapsed.TotalSeconds > MinilandInterval && MiniEnabled)
                         {
                             UpdateBuff = true;
-                            while (UpdateBuff && run)
+                            Stopwatch sw = Stopwatch.StartNew();
+                            while (UpdateBuff && run && sw.Elapsed.TotalSeconds <= 5)
                                 await Task.Delay(100);
                             if (!run)
                             {
@@ -509,7 +513,7 @@ namespace Multi_Account_Synchronizer
             {
                 ignoreFlower = false;
             }
-            else if (Player.FlowerSW.Elapsed.TotalSeconds >= 7 * 60 && Player.NormalFlower)
+            else if (Player.FlowerSW.Elapsed.TotalSeconds >= NormalFlowerUsage && Player.NormalFlower)
             {
                 ignoreFlower = false;
             }
@@ -517,7 +521,7 @@ namespace Multi_Account_Synchronizer
             {
                 ignoreFlower = false;
             }
-            else if (Player.StrongFlower && Player.FlowerSW.Elapsed.TotalSeconds >= 40)
+            else if (Player.StrongFlower && Player.FlowerSW.Elapsed.TotalSeconds >= StrongFlowerUsage)
             {
                 ignoreFlower = false;
             }
@@ -539,11 +543,17 @@ namespace Multi_Account_Synchronizer
             map_changed = false;
             while (loot.Id != -1 && run && !map_changed)
             {
-                await Task.Delay(10);
+                await Task.Delay(100);
                 ignoreFlower = ShouldIgnoreFlower();
                 if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2))
                 {
+                    if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
+                    {
+                        Scene.LootData.Remove(loot.Id);
+                        sw.Restart();
+                    }
                     Api.player_walk(loot.Pos.X, loot.Pos.Y);
+                    await Task.Delay(300);
                 }
                 else
                 {
@@ -624,6 +634,11 @@ namespace Multi_Account_Synchronizer
             UpdateVoke = true;
             while (LureMob > 0 && !map_changed && run)
             {
+                if (GoKite && KiteMob != null)
+                {
+                    WalkRangePoint(KiteMob.Pos, KeepDistanceValue);
+                    GoKite = false;
+                }
                 Api.attack_monster(LureMob);
                 await Task.Delay(200);
                 if (oldmob != LureMob)
@@ -662,6 +677,7 @@ namespace Multi_Account_Synchronizer
                     }
                 }
             }
+            KiteMob = null;
             AddLog("Finished killing lure", "Kill Lure");
             if (!run)
             {
@@ -732,6 +748,7 @@ namespace Multi_Account_Synchronizer
             }
 
             await LeaveMini();
+            EnterMini = false;
         }
         private async Task MinilandStopDPS()
         {
@@ -1122,6 +1139,8 @@ namespace Multi_Account_Synchronizer
             if (packet_splitted[2] != "3")
                 return;
             Attacked = false;
+            GoKite = false;
+            KiteMob = null;
             LastAttackedMob = int.Parse(packet_splitted[3]);
             var mob = Scene.EntityData.Values.Where(x => x.Id == LastAttackedMob).FirstOrDefault();
             if (mob != null && KeepDistance && KeepDistanceValue != 0)
@@ -1129,13 +1148,15 @@ namespace Multi_Account_Synchronizer
                 Stopwatch sw = Stopwatch.StartNew();
                 while (!Attacked && run)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(33);
                     if (sw.Elapsed.TotalSeconds >= 5)
                         return;
                 }
                 if (!run)
                     return;
-                WalkRangePoint(mob.Pos, KeepDistanceValue);
+                KiteMob = mob;
+                GoKite = true;
+                //WalkRangePoint(mob.Pos, KeepDistanceValue);
 
             }
         }
