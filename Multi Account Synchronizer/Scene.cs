@@ -43,9 +43,12 @@ namespace Multi_Account_Synchronizer
 
             return mob_id;
         }
-        public int MonstersInRadius(int x, int y, int radius, bool blacklist, bool whitelist, List<int> monsters)
+        public int MonstersInRadius(int x, int y, int radius, bool blacklist, bool whitelist, List<int> monsters, double ignoreRadius = -1)
         {
+            
             int count = 0;
+            if (ignoreRadius == 1)
+                ignoreRadius = Math.Sqrt(2);
             try
             {
                 List<Entities> ids = new List<Entities>();
@@ -57,6 +60,11 @@ namespace Multi_Account_Synchronizer
                         continue;
                     if (Statics.Distance(new Point(x, y), entity.Pos) > radius)
                         continue;
+                    if (Statics.Distance(new Point(x, y), entity.Pos) <= ignoreRadius)
+                    {
+                        continue;
+                    }
+                        
                     count++;
                 }
                 return count;
@@ -157,11 +165,12 @@ namespace Multi_Account_Synchronizer
             }
             return resultloot;
         }
-        public List<Loot> GetLootList(bool blacklist, bool whitelist, bool ignoreflowers, bool my, bool group, bool neutral, List<int> lootlist, bool trashitems)
+        public List<Loot> GetLootList(bool blacklist, bool whitelist, bool ignoreflowers, bool my, bool group, bool neutral, List<int> lootlist, bool trashitems, int chance)
         {
             Random rnd = new Random();
             List<Loot> resultList = new List<Loot>();
             List<int> owners = new List<int>();
+            bool addedFlower = false;
             if (my)
                 owners.Add(player.id);
             if (group)
@@ -170,22 +179,26 @@ namespace Multi_Account_Synchronizer
                 owners.Add(0);
             foreach (Loot loot in LootData.Values)
             {
-                int addchance = rnd.Next(0, 4);
+                bool trashItemChance = Statics.Chance(chance);
                 if (!trashitems)
-                    addchance = 69;
+                    trashItemChance = false;
                 else if (lootlist.Count == 1 && lootlist.Contains(1086) && whitelist)
-                    addchance = 31;
+                    trashItemChance = false;
                 if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > Math.Sqrt(2))
                     continue;
-                if (blacklist && lootlist.Contains(loot.Vnum) && addchance != 0)
+                if (blacklist && lootlist.Contains(loot.Vnum) && !trashItemChance)
                     continue;
-                if (whitelist && !lootlist.Contains(loot.Vnum) && addchance != 0)
+                if (whitelist && !lootlist.Contains(loot.Vnum) && !trashitems)
                     continue;
                 if (loot.Vnum == 1086 && ignoreflowers)
                     continue;
                 if (!owners.Contains(loot.Owner))
                     continue;
+                if (addedFlower && loot.Vnum == 1086)
+                    continue;
                 resultList.Add(loot);
+                if (loot.Vnum == 1086)
+                    addedFlower = true;
             }
             return resultList;
         }
@@ -209,6 +222,33 @@ namespace Multi_Account_Synchronizer
                 handle_die(packet_splitted, full_packet);
             else if (header == "drop")
                 handle_drop(packet_splitted, full_packet);
+            else if (header == "guri")
+                handle_guri(packet_splitted, full_packet);
+        }
+        private void handle_guri(List<string> packet_splitted, string full_packet)
+        {
+            //guri 3 3 19587 35 17 3 8 2 -1 0
+            //push, voke etc coords update
+            if (packet_splitted.Count() < 9)
+                return;
+            try
+            {
+                if (packet_splitted[1] == "3" && packet_splitted[2] == "3")
+                {
+                    int id = int.Parse(packet_splitted[3]);
+                    int x = int.Parse(packet_splitted[4]);
+                    int y = int.Parse(packet_splitted[5]);
+                    if (EntityData.ContainsKey(id))
+                    {
+                        EntityData[id].Pos = new Point(x, y);
+                    }
+                        
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("handle_guri " + full_packet + " " + e.Message);
+            }
         }
         public void handle_drop(List<string> packet_splitted, string full_packet)
         {

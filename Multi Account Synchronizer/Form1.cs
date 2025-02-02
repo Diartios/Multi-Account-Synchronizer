@@ -336,7 +336,9 @@ namespace Multi_Account_Synchronizer
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
             int vokeDelay = Statics.JsonGetValueOrDefault(Members["General Settings"], "Voke Delay", 750);
             int minMobCountVoke = Statics.JsonGetValueOrDefault(Members["General Settings"], "Min Monster Count For Voke", 6);
-            bool trashItems = Statics.JsonGetValueOrDefault(Members["General Settings"], "Trash Items", true);
+            bool trashItems = Statics.JsonGetValueOrDefault(Members["General Settings"], "Loot Trash Items", true);
+            int trashItemsChance = Statics.JsonGetValueOrDefault(Members["General Settings"], "Trash Items Chance", 25);
+            double ignoreVokeRadius = Statics.JsonGetValueOrDefault(Members["General Settings"], "Ignore Voke Radius", 1.0);
             if (inviteCommand != "" && !Statics.InviteCommands.ContainsKey(inviteCommand))
             {
                 inviteCommand = "";
@@ -357,6 +359,8 @@ namespace Multi_Account_Synchronizer
             bot.VokeDelay = vokeDelay;
             bot.MinVokeMonsterCount = minMobCountVoke;
             bot.TrashItems = trashItems;
+            bot.TrashItemsChance = trashItemsChance;
+            bot.IgnoreVokeRadius = ignoreVokeRadius;
             foreach (var member in Members["Members"])
             {
 
@@ -393,7 +397,6 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton1_Click(object sender, EventArgs e)
         {
-            timer1.Interval = 250;
             int killpointcount = -1;
             var ab = apis.Where(x => x.Item5.DPS && x.Item5.Path.Count(y => y.Kill) > 0).FirstOrDefault();
             if (ab != null)
@@ -465,14 +468,14 @@ namespace Multi_Account_Synchronizer
                 if (result == DialogResult.No)
                     return;
             }
-
+            this.Text = "MAS by Diartios1881 | Running";
             apis.ForEach(x => {
                 if (!x.Item5.run)
                 {
 
                     x.Item5.AddLog("Bot started", "Information");
                 }
-
+                x.Item5.LastPath = -1;
                 x.Item5.run = true;
                 x.Item5.Start();
             });
@@ -480,6 +483,8 @@ namespace Multi_Account_Synchronizer
 
         private void roundedButton2_Click(object sender, EventArgs e)
         {
+            if (!this.Text.Contains("Idle"))
+                this.Text = "MAS by Diartios1881 | Stopped";
             apis.ForEach(x => {
                 if (x.Item5.run)
                 {
@@ -534,7 +539,9 @@ namespace Multi_Account_Synchronizer
             generalSettings.Add("Invite Command", a.Item5.InviteCommand);
             generalSettings.Add("Voke Delay", a.Item5.VokeDelay);
             generalSettings.Add("Loot Trash Items", a.Item5.TrashItems);
+            generalSettings.Add("Trash Items Chance", a.Item5.TrashItemsChance);
             generalSettings.Add("Min Monster Count For Voke", a.Item5.MinVokeMonsterCount);
+            generalSettings.Add("Ignore Voke Radius", a.Item5.IgnoreVokeRadius);
             content["General Settings"] = generalSettings;
             foreach (var api in apis)
             {
@@ -678,6 +685,24 @@ namespace Multi_Account_Synchronizer
             }
 
 
+        }
+
+        private void roundedButton6_Click(object sender, EventArgs e)
+        {
+            if (this.Text.Contains("Idle") || this.Text.Contains("Running"))
+            {
+                return;
+            }
+            this.Text = "MAS by Diartios1881 | Running";
+            foreach (var api in apis)
+            {
+                if (!api.Item5.run)
+                {
+
+                    api.Item5.AddLog("Bot resumed", "Information");
+                }
+                api.Item5.run = true;
+            }
         }
     }
 }

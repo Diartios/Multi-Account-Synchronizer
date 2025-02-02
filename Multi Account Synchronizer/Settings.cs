@@ -17,20 +17,33 @@ namespace Multi_Account_Synchronizer
             InitializeComponent();
 
             this.apis = apis;
-            foreach (var x in this.Controls.OfType<TableLayoutPanel>())
+            if (apis.Count == 0)
             {
-                foreach (var y in x.Controls.OfType<NumericUpDown>())
+                this.Close();
+                return;
+            }
+            foreach (var x in this.Controls.OfType<GroupBox>())
+            {
+                foreach (var y in x.Controls.OfType<TableLayoutPanel>())
                 {
-                    y.Enabled = false;
+                    foreach (var z in y.Controls.OfType<NumericUpDown>())
+                    {
+                        z.Enabled = false;
+                    }
                 }
+                
             }
             UpdateNumerics();
-            foreach (var x in this.Controls.OfType<TableLayoutPanel>())
+            foreach (var x in this.Controls.OfType<GroupBox>())
             {
-                foreach (var y in x.Controls.OfType<NumericUpDown>())
+                foreach (var y in x.Controls.OfType<TableLayoutPanel>())
                 {
-                    y.Enabled = true;
+                    foreach (var z in y.Controls.OfType<NumericUpDown>())
+                    {
+                        z.Enabled = true;
+                    }
                 }
+
             }
             if (!visible)
             {
@@ -73,6 +86,8 @@ namespace Multi_Account_Synchronizer
             TrashItemsCheckBox.Checked = api.Item5.TrashItems;
             NormalFlower.Value = api.Item5.NormalFlowerUsage;
             StrongFlower.Value = api.Item5.StrongFlowerUsage;
+            TrashItemChance.Value = api.Item5.TrashItemsChance;
+            IgnoreVokeRadius.Value = ((int)api.Item5.IgnoreVokeRadius);
             UpdateSettings();
         }
         private void UpdateSettings()
@@ -91,6 +106,8 @@ namespace Multi_Account_Synchronizer
                 x.Item5.StopAfterMin = ((int)StopAfterMinutes.Value);
                 x.Item5.StrongFlowerUsage = ((int)StrongFlower.Value);
                 x.Item5.NormalFlowerUsage = ((int)NormalFlower.Value);
+                x.Item5.TrashItemsChance = ((int)TrashItemChance.Value);
+                x.Item5.IgnoreVokeRadius = ((int)IgnoreVokeRadius.Value);
             }
 
         }
@@ -212,6 +229,16 @@ namespace Multi_Account_Synchronizer
         private void StrongFlower_ValueChanged(object sender, EventArgs e)
         {
             apis.ForEach(x => x.Item5.StrongFlowerUsage = ((int)StrongFlower.Value));
+        }
+
+        private void numericUpDown1_ValueChanged_1(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.TrashItemsChance = ((int)TrashItemChance.Value));
+        }
+
+        private void VokeIgnoreRadius_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.IgnoreVokeRadius = ((int)IgnoreVokeRadius.Value));
         }
     }
 }
