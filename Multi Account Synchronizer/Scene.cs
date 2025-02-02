@@ -60,10 +60,19 @@ namespace Multi_Account_Synchronizer
                         continue;
                     if (Statics.Distance(new Point(x, y), entity.Pos) > radius)
                         continue;
-                    if (Statics.Distance(new Point(x, y), entity.Pos) <= ignoreRadius)
+                    if (ignoreRadius != -1)
                     {
-                        continue;
+                        if (ignoreRadius == 0)
+                        {
+                            if (entity.Pos.X == x && entity.Pos.Y == y)
+                                continue;
+                        }
+                        else if (Statics.IsInAoeZone(new Point(x, y), entity.Pos, ((int)ignoreRadius)))
+                        {
+                            continue;
+                        }
                     }
+                    
                         
                     count++;
                 }

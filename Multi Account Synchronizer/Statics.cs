@@ -77,6 +77,20 @@ namespace Multi_Account_Synchronizer
             return rnd.Next(0, 100) < percentage;
         }
 
+        public static bool IsInAoeZone(Point start, Point position, int range)
+        {
+            //i've got the code from vanosilla so i dont really know how nostale distance calculation works
+            int dx = Math.Abs(start.X - position.X);
+            int dy = Math.Abs(start.Y - position.Y);
+            bool s = dx <= range && dy <= range;
+            if (range < 2)
+                return s;
+            else if (range < 5)
+                return s && dx + dy < range + range;
+            else
+                return s && dx + dy <= range + range / 2;
+        }
+
         public static int[][] LoadMap(int map_id)
         {
             //i've stolen all the code from stradiveri
