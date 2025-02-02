@@ -27,6 +27,7 @@ namespace Multi_Account_Synchronizer
         public bool updated = false;
         public bool NormalFlower = false;
         public bool StrongFlower = false;
+        public bool FlowerQuest = false;
         public bool Dancing = false;
         public Stopwatch FlowerSW = new Stopwatch();
         public Pet Pet = new Pet();
@@ -108,6 +109,21 @@ namespace Multi_Account_Synchronizer
                 handle_in(packet_splitted, full_packet);
             else if (header == "pst")
                 handle_pst(packet_splitted, full_packet);
+            else if (header == "qstlist")
+                handle_qstlist(packet_splitted, full_packet);
+        }
+        private void handle_qstlist(List<string> packet_splitted, string full_packet)
+        {
+            FlowerQuest = false;
+            for (int i = 1; i < packet_splitted.Count; i++)
+            {
+                string[] newSplit = packet_splitted[i].Split('.');
+                if (newSplit.Count() < 2)
+                    continue;
+                if (newSplit[1] == "5981")
+                    FlowerQuest = true;
+            }
+            Console.WriteLine($"{name}, {FlowerQuest}");
         }
         public void handle_pst(List<string> packet_splitted, string full_packet)
         {

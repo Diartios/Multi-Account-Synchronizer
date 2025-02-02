@@ -74,6 +74,7 @@ namespace Multi_Account_Synchronizer
         public bool UseVoke = false;
         public bool UpdateVoke = false;
         public int MinVokeMonsterCount = 6;
+        public double IgnoreVokeRadius = 1.0;
         public bool GoNextLure = false;
         public bool StartAttack = false;
         public int LureMob = -1;
@@ -81,6 +82,7 @@ namespace Multi_Account_Synchronizer
         public bool UpdateBuff = false;
         public bool EnterMini = false;
         public bool Finished = false;
+        public int LastPath = -1;
         #endregion
 
         #region Walking Variables
@@ -125,6 +127,7 @@ namespace Multi_Account_Synchronizer
         public List<int> LootList = new List<int>();
         private int CurrentLootId = -1;
         public bool TrashItems = true;
+        public int TrashItemsChance = 25;
         #endregion
 
         #region Security Variables
@@ -261,8 +264,11 @@ namespace Multi_Account_Synchronizer
                 if (DPS)
                 {
                     int i = 0;
+                    if (LastPath != -1 && LastPath < Path.Count)
+                        i = LastPath;
                     while (i < Path.Count && run)
                     {
+                        LastPath = i;
                         await Task.Delay(1);
                         if (i == 0 && Minilandsw.Elapsed.TotalSeconds == 0 && MiniEnabled || i == 0 && Minilandsw.Elapsed.TotalSeconds > MinilandInterval && MiniEnabled)
                         {
@@ -270,6 +276,10 @@ namespace Multi_Account_Synchronizer
                             Stopwatch sw = Stopwatch.StartNew();
                             while (UpdateBuff && run && sw.Elapsed.TotalSeconds <= 5)
                                 await Task.Delay(100);
+                            if (sw.Elapsed.TotalSeconds > 5)
+                            {
+                                UpdateBuff = false;
+                            } 
                             if (!run)
                             {
                                 Stop();
@@ -289,13 +299,11 @@ namespace Multi_Account_Synchronizer
                         {
                             await Task.Delay(Random.Next(600, 1400));
                         }
-                        //wait respawn
-                        if (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
+                        if (Player.map_id == 20001 && run && StartBuff)
                         {
-                            AddLog("Waiting for respawn", "Bot");
+                            await MinilandDPS();
                         }
-                        while (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
-                            await Task.Delay(100);
+                            
                         if (!run)
                         {
                             Stop();
@@ -304,6 +312,14 @@ namespace Multi_Account_Synchronizer
                         Finished = false;
                         WalkPoint p = Path[i];
                         await Walk(p);
+                        //wait respawn
+                        if (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
+                        {
+                            AddLog("Waiting for respawn", "Bot"); while (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
+                                await Task.Delay(100);
+                            await Task.Delay(Random.Next(250, 650));
+                        }
+                        
                         if (!run)
                         {
                             Stop();
@@ -347,7 +363,10 @@ namespace Multi_Account_Synchronizer
                             {
                                 await Task.Delay(DelayGenerator(DelayAfterKillPoint));
                             }
+                            
                         }
+                        if (i == Path.Count - 1 && run)
+                            LastPath = -1;
                         i++;
                     }
 
@@ -505,7 +524,11 @@ namespace Multi_Account_Synchronizer
         private bool ShouldIgnoreFlower()
         {
             bool ignoreFlower = true;
-            if (!IgnoreFlower)
+            if (Player.FlowerQuest)
+            {
+                ignoreFlower = true;
+            }
+            else if (!IgnoreFlower)
             {
                 ignoreFlower = false;
             }
@@ -544,7 +567,7 @@ namespace Multi_Account_Synchronizer
             while (loot.Id != -1 && run && !map_changed)
             {
                 await Task.Delay(100);
-                ignoreFlower = ShouldIgnoreFlower();
+                
                 if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2))
                 {
                     if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
@@ -553,30 +576,35 @@ namespace Multi_Account_Synchronizer
                         sw.Restart();
                     }
                     Api.player_walk(loot.Pos.X, loot.Pos.Y);
-                    await Task.Delay(300);
+                    await Task.Delay(100);
+                    if (Statics.Distance(loot.Pos,new Point(Player.x,Player.y)) > Math.Sqrt(2))
+                        await Task.Delay(150);
                 }
                 else
                 {
-                    var list = Scene.GetLootList(LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList, TrashItems);
+                    ignoreFlower = ShouldIgnoreFlower();
+                    var list = Scene.GetLootList(LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList, TrashItems, TrashItemsChance);
                     foreach (var lood in list)
                     {
+                        if (lood.Vnum == 1086 && Player.FlowerQuest)
+                            continue;
+                        sw.Restart();
                         AddLog($"Looting item with id {lood.Id} and vnum {lood.Vnum}", "Loot");
                         while (Scene.LootData.ContainsKey(lood.Id) && run)
                         {
                             CurrentLootId = lood.Id;
                             Api.pick_up(lood.Id);
-                            await Task.Delay(200);
+                            await Task.Delay(100);
                             if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
                             {
                                 Scene.LootData.Remove(loot.Id);
                                 sw.Restart();
                             }
-                            sw.Restart();
                         }
                     }
                 }
 
-
+                ignoreFlower = ShouldIgnoreFlower();
                 loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
                 sw.Restart();
                 await Task.Delay(10);
@@ -668,7 +696,7 @@ namespace Multi_Account_Synchronizer
                             {
                                 Api.use_pet_skill(LureMob, 663);
                             }
-                            else
+                            else if (VokeMonsterCount() >= MinVokeMonsterCount)
                             {
                                 Api.pets_walk(mob.Pos.X, mob.Pos.Y);
                             }
@@ -688,13 +716,16 @@ namespace Multi_Account_Synchronizer
         private int VokeMonsterCount()
         {
             int count = 0;
+            if (!Scene.EntityData.ContainsKey(LureMob))
+                return 0;
             if (Otter)
             {
-                count = Scene.MonstersInRadius(Player.Pet.X, Player.Pet.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList);
+                //Scene.MonstersInRadius(Player.Pet.X, Player.Pet.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList, IgnoreVokeRadius);
+                count = Scene.MonstersInRadius(Scene.EntityData[LureMob].Pos.X, Scene.EntityData[LureMob].Pos.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList, IgnoreVokeRadius);
             }
             else if (Panda && Scene.EntityData.ContainsKey(LureMob))
             {
-                count = Scene.MonstersInRadius(Scene.EntityData[LureMob].Pos.X, Scene.EntityData[LureMob].Pos.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList);
+                count = Scene.MonstersInRadius(Scene.EntityData[LureMob].Pos.X, Scene.EntityData[LureMob].Pos.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList, IgnoreVokeRadius);
             }
             return count;
         }
@@ -777,6 +808,7 @@ namespace Multi_Account_Synchronizer
             while (!StartBuff && run)
                 await Task.Delay(100);
             WaitingForMiniland = false;
+            StopAfterMin = 0;
             await Task.Delay(5000);
             AddLog("Bot stopped", "Information");
             run = false;
@@ -791,6 +823,7 @@ namespace Multi_Account_Synchronizer
             {
                 AddLog("Bot stopped", "Information");
                 run = false;
+                StopAfterMin = 0;
             }
             if (!run)
             {
@@ -803,26 +836,30 @@ namespace Multi_Account_Synchronizer
         }
         private async Task MinilandMaster()
         {
-            while (!Invite && run)
+            while (!Invite && run && !StartBuff)
                 await Task.Delay(100);
             if (!run)
             {
                 Stop();
                 return;
             }
-                
-            foreach (string account in DPSAccounts)
+            if (!StartBuff)
             {
-                if (InviteCommand == "")
-                    return;
-                AddLog($"Inviting account with name {account}", "Miniland Master");
-                Api.send_packet($"${InviteCommand} {account}");
-                await Task.Delay(1000);
+                foreach (string account in DPSAccounts)
+                {
+                    if (InviteCommand == "")
+                        return;
+                    AddLog($"Inviting account with name {account}", "Miniland Master");
+                    Api.send_packet($"${InviteCommand} {account}");
+                    await Task.Delay(1000);
+                }
             }
+
             if (ShouldStop)
             {
                 AddLog("Bot stopped", "Information");
                 run = false;
+                StopAfterMin = 0;
             }
             while (!StartBuff && run)
                 await Task.Delay(100);
@@ -843,6 +880,7 @@ namespace Multi_Account_Synchronizer
             while (!Player.updated)
                 await Task.Delay(1);
             Buffing = true;
+            await Task.Delay(DelaySameKey * delayer);
             foreach (var id in Buffs)
             {
                 if (!Player.SkillReady.ContainsKey(id.Item2))

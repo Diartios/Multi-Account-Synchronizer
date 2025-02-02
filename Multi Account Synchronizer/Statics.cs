@@ -67,6 +67,15 @@ namespace Multi_Account_Synchronizer
             double distance = Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
             return distance;
         }
+        
+        public static bool Chance(int percentage)
+        {
+            if (percentage <= 0)
+                return false;
+            if (percentage >= 100) return true;
+            Random rnd = new Random();
+            return rnd.Next(0, 100) < percentage;
+        }
 
         public static int[][] LoadMap(int map_id)
         {

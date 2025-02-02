@@ -20,7 +20,6 @@ namespace Multi_Account_Synchronizer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             Form1 form1 = new Form1();
             Form2 form2 = new Form2();
             form1.form2 = form2;
