@@ -42,6 +42,8 @@
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.PandaCheckBox = new System.Windows.Forms.CheckBox();
             this.OttercheckBox = new System.Windows.Forms.CheckBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +61,7 @@
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -82,10 +85,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox2.Enabled = false;
             this.textBox2.ForeColor = System.Drawing.Color.White;
             this.textBox2.Location = new System.Drawing.Point(82, 472);
             this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(273, 20);
             this.textBox2.TabIndex = 48;
             // 
@@ -190,19 +193,22 @@
             this.groupBox3.Size = new System.Drawing.Size(443, 54);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Non-Essential Roles";
+            this.groupBox3.Text = "Non-Essential Settings";
             // 
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel5.ColumnCount = 4;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.99813F));
             this.tableLayoutPanel5.Controls.Add(this.PandaCheckBox, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.OttercheckBox, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.numericUpDown1, 3, 0);
+            this.tableLayoutPanel5.Controls.Add(this.label2, 2, 0);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(6, 17);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
@@ -214,7 +220,7 @@
             // 
             this.PandaCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.PandaCheckBox.AutoSize = true;
-            this.PandaCheckBox.Location = new System.Drawing.Point(294, 6);
+            this.PandaCheckBox.Location = new System.Drawing.Point(132, 6);
             this.PandaCheckBox.Name = "PandaCheckBox";
             this.PandaCheckBox.Size = new System.Drawing.Size(57, 17);
             this.PandaCheckBox.TabIndex = 1;
@@ -226,13 +232,37 @@
             // 
             this.OttercheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.OttercheckBox.AutoSize = true;
-            this.OttercheckBox.Location = new System.Drawing.Point(83, 6);
+            this.OttercheckBox.Location = new System.Drawing.Point(29, 6);
             this.OttercheckBox.Name = "OttercheckBox";
             this.OttercheckBox.Size = new System.Drawing.Size(49, 17);
             this.OttercheckBox.TabIndex = 0;
             this.OttercheckBox.Text = "Otter";
             this.OttercheckBox.UseVisualStyleBackColor = true;
             this.OttercheckBox.CheckedChanged += new System.EventHandler(this.OttercheckBox_CheckedChanged);
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.numericUpDown1.Location = new System.Drawing.Point(324, 4);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(104, 20);
+            this.numericUpDown1.TabIndex = 2;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(228, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(79, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Delay Multipler:";
             // 
             // richTextBox1
             // 
@@ -443,6 +473,7 @@
             this.groupBox3.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -478,5 +509,7 @@
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         public System.Windows.Forms.CheckBox PandaCheckBox;
         public System.Windows.Forms.CheckBox OttercheckBox;
+        public System.Windows.Forms.NumericUpDown numericUpDown1;
+        public System.Windows.Forms.Label label2;
     }
 }

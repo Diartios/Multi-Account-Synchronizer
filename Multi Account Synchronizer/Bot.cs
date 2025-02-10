@@ -134,9 +134,12 @@ namespace Multi_Account_Synchronizer
         public bool SecurityEnabled = true;
         public bool MapStop = false;
         List<int> Maps = new List<int>();
+        public bool ExpectingMiniland = false;
+        public bool StopAllBots = false;
         #endregion
 
         #region Delay Variables
+        public int DelayMultipler = 1;
         public Tuple<int, int> MinilandExitDelay = new Tuple<int, int>(750, 2000);
         public Tuple<int, int> AmuletUseDelay = new Tuple<int, int>(750, 1450);
         public Tuple<int, int> StartAttackDelay = new Tuple<int, int>(1500, 2100);
@@ -189,25 +192,11 @@ namespace Multi_Account_Synchronizer
                 randy = Random.Next(-1 * RandomizeWalkValue, RandomizeWalkValue + 1);
             }
             //check if the cell is walkable
-            if (CurrentMap.Length > 0 && RandomizeWalk)
+            if (!IsWalkable(point.X + randx, point.Y + randy))
             {
-                if (point.X + randx > CurrentMap.Length)
-                {
-                    randx = 0;
-                    randy = 0;
-                }
-                else if (point.Y + randy > CurrentMap[point.X + randx].Length)
-                {
-                    randx = 0;
-                    randy = 0;
-                }
-                else if (CurrentMap[point.X + randx][point.Y + randy] == 0)
-                {
-                    randx = 0;
-                    randy = 0;
-                }
-            }
-
+                randx = 0;
+                randy = 0;
+            }    
             AddLog($"Walking to {point.X + randx} | {point.Y + randy}", "Walk");
             while ((Player.x != point.X + randx || Player.y != point.Y + randy) && !map_changed && run)
             {
@@ -239,7 +228,7 @@ namespace Multi_Account_Synchronizer
             ShouldStop = false;
             WaitingForMiniland = false;
             Api.stop_bot();
-            WorkingTimeSw.Reset();
+            WorkingTimeSw.Stop();
             LureMob = -1;
         }
         private int DelayGenerator(Tuple<int, int> range)
@@ -250,7 +239,7 @@ namespace Multi_Account_Synchronizer
                 return range.Item1;
 
             int delay = Random.Next(range.Item1, range.Item2);
-            return delay;
+            return delay * DelayMultipler;
         }
         public async Task Run()
         {
@@ -564,6 +553,12 @@ namespace Multi_Account_Synchronizer
             var loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
             Stopwatch sw = Stopwatch.StartNew();
             map_changed = false;
+            if (loot.Id == -1)
+            {
+                await Task.Delay(500);
+                loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
+            }
+              
             while (loot.Id != -1 && run && !map_changed)
             {
                 await Task.Delay(100);
@@ -711,6 +706,10 @@ namespace Multi_Account_Synchronizer
             {
                 Stop();
                 return;
+            }
+            else if (run)
+            {
+                LastPath++;
             }
         }
         private int VokeMonsterCount()
@@ -1205,6 +1204,7 @@ namespace Multi_Account_Synchronizer
             if (full_packet.Contains("#mjoin") && full_packet.Contains(OwnerName))
             {
                 await Task.Delay(DelayGenerator(AcceptInviteDelay));
+                ExpectingMiniland = true;
                 Api.send_packet(packet_splitted[2]);
             }
 
@@ -1230,7 +1230,20 @@ namespace Multi_Account_Synchronizer
                 Stop();
             }
         }
-
+        async Task Beep()
+        {
+            await Task.Run(() => Console.Beep(800, 200));
+            await Task.Run(() => Console.Beep(800, 200));
+            await Task.Run(() => Console.Beep(800, 200));
+        }
+        private async Task MinilandSecurity()
+        {
+            StopAllBots = true;
+            run = false;
+            AddLog("Unexpected miniland join", "Security");
+            await Beep();
+            await Beep();
+        }
         private void handle_at(List<string> packet_splitted, string full_packet)
         {
             map_changed = true;
@@ -1239,6 +1252,14 @@ namespace Multi_Account_Synchronizer
             {
                 CurrentMap = Statics.LoadMap(int.Parse(packet_splitted[2]));
                 LastLoadedMap = int.Parse(packet_splitted[2]);
+            }
+            if (packet_splitted[2] == "20001" && !ExpectingMiniland && run)
+            {
+                MinilandSecurity();
+            }
+            else if (packet_splitted[2] == "20001" && ExpectingMiniland)
+            {
+                ExpectingMiniland = false;
             }
         }
     }

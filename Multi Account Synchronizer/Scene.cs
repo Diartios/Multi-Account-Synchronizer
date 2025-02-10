@@ -20,6 +20,7 @@ namespace Multi_Account_Synchronizer
         public Dictionary<int, Loot> LootData = new Dictionary<int, Loot>();
         public Dictionary<int, Scene.Entities> LastAttacks = new Dictionary<int, Scene.Entities>();
         public bool updated = false;
+        public Random random = new Random();
         public int MobID()
         {
             double maxdistance = 1000;
@@ -47,8 +48,6 @@ namespace Multi_Account_Synchronizer
         {
             
             int count = 0;
-            if (ignoreRadius == 1)
-                ignoreRadius = Math.Sqrt(2);
             try
             {
                 List<Entities> ids = new List<Entities>();
@@ -176,7 +175,6 @@ namespace Multi_Account_Synchronizer
         }
         public List<Loot> GetLootList(bool blacklist, bool whitelist, bool ignoreflowers, bool my, bool group, bool neutral, List<int> lootlist, bool trashitems, int chance)
         {
-            Random rnd = new Random();
             List<Loot> resultList = new List<Loot>();
             List<int> owners = new List<int>();
             bool addedFlower = false;
@@ -188,7 +186,7 @@ namespace Multi_Account_Synchronizer
                 owners.Add(0);
             foreach (Loot loot in LootData.Values)
             {
-                bool trashItemChance = Statics.Chance(chance);
+                bool trashItemChance = Chance(chance);
                 if (!trashitems)
                     trashItemChance = false;
                 else if (lootlist.Count == 1 && lootlist.Contains(1086) && whitelist)
@@ -197,7 +195,7 @@ namespace Multi_Account_Synchronizer
                     continue;
                 if (blacklist && lootlist.Contains(loot.Vnum) && !trashItemChance)
                     continue;
-                if (whitelist && !lootlist.Contains(loot.Vnum) && !trashitems)
+                if (whitelist && !lootlist.Contains(loot.Vnum) && !trashItemChance)
                     continue;
                 if (loot.Vnum == 1086 && ignoreflowers)
                     continue;
@@ -210,6 +208,15 @@ namespace Multi_Account_Synchronizer
                     addedFlower = true;
             }
             return resultList;
+        }
+        public bool Chance(int percentage)
+        {
+            if (percentage <= 0)
+                return false;
+            if (percentage >= 100) return true;
+            if (random == null)
+                random = new Random();
+            return random.Next(0, 100) < percentage;
         }
         public void handle_packets(List<string> packet_splitted, string full_packet)
         {
