@@ -1225,9 +1225,7 @@ namespace Multi_Account_Synchronizer
             int id = int.Parse(packet_splitted[2]);
             if (!Maps.Contains(id))
             {
-                run = false;
-                AddLog("Bot stopped due to map change security", "Security");
-                Stop();
+                MapSecurity();
             }
         }
         async Task Beep()
@@ -1243,6 +1241,12 @@ namespace Multi_Account_Synchronizer
             AddLog("Unexpected miniland join", "Security");
             await Beep();
             await Beep();
+        }
+        private async Task MapSecurity()
+        {
+            StopAllBots = true;
+            run = false;
+            AddLog("Bot stopped due to map change security", "Security");
         }
         private void handle_at(List<string> packet_splitted, string full_packet)
         {
