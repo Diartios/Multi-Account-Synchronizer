@@ -158,5 +158,10 @@ namespace Multi_Account_Synchronizer
 
             bot.Panda = PandaCheckBox.Checked;
         }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            bot.DelayMultipler = (int)numericUpDown1.Value;
+        }
     }
 }

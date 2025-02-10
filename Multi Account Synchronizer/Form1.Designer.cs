@@ -32,13 +32,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.roundedButton6 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton4 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton5 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton3 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,23 +69,18 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel2.Controls.Add(this.roundedButton6, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.roundedButton6, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton4, 5, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton5, 4, 0);
             this.tableLayoutPanel2.Controls.Add(this.roundedButton3, 3, 0);
-            this.tableLayoutPanel2.Controls.Add(this.roundedButton2, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.roundedButton2, 1, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(12, 158);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(520, 34);
             this.tableLayoutPanel2.TabIndex = 3;
-            // 
-            // timer1
-            // 
-            this.timer1.Interval = 250;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // roundedButton6
             // 
@@ -101,7 +96,7 @@
             this.roundedButton6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
             this.roundedButton6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.roundedButton6.ForeColor = System.Drawing.Color.White;
-            this.roundedButton6.Location = new System.Drawing.Point(89, 3);
+            this.roundedButton6.Location = new System.Drawing.Point(175, 3);
             this.roundedButton6.Name = "roundedButton6";
             this.roundedButton6.Size = new System.Drawing.Size(80, 28);
             this.roundedButton6.TabIndex = 5;
@@ -216,7 +211,7 @@
             this.roundedButton2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
             this.roundedButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.roundedButton2.ForeColor = System.Drawing.Color.White;
-            this.roundedButton2.Location = new System.Drawing.Point(175, 3);
+            this.roundedButton2.Location = new System.Drawing.Point(89, 3);
             this.roundedButton2.Name = "roundedButton2";
             this.roundedButton2.Size = new System.Drawing.Size(80, 28);
             this.roundedButton2.TabIndex = 1;
@@ -224,6 +219,11 @@
             this.roundedButton2.TextColor = System.Drawing.Color.White;
             this.roundedButton2.UseVisualStyleBackColor = false;
             this.roundedButton2.Click += new System.EventHandler(this.roundedButton2_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 250;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 

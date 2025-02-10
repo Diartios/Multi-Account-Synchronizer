@@ -68,14 +68,6 @@ namespace Multi_Account_Synchronizer
             return distance;
         }
         
-        public static bool Chance(int percentage)
-        {
-            if (percentage <= 0)
-                return false;
-            if (percentage >= 100) return true;
-            Random rnd = new Random();
-            return rnd.Next(0, 100) < percentage;
-        }
 
         public static bool IsInAoeZone(Point start, Point position, int range)
         {

@@ -123,7 +123,6 @@ namespace Multi_Account_Synchronizer
                 if (newSplit[1] == "5981")
                     FlowerQuest = true;
             }
-            Console.WriteLine($"{name}, {FlowerQuest}");
         }
         public void handle_pst(List<string> packet_splitted, string full_packet)
         {

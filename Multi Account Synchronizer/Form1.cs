@@ -312,6 +312,7 @@ namespace Multi_Account_Synchronizer
             RadioButton DPS = b.radioButton1;
             RadioButton Buffer = b.radioButton2;
             RadioButton MinilandOwner = b.radioButton3;
+            NumericUpDown DelayMultipler = b.numericUpDown1;
             CheckBox Otter = b.OttercheckBox;
             CheckBox Panda = b.PandaCheckBox;
 
@@ -371,6 +372,7 @@ namespace Multi_Account_Synchronizer
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
                     Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
                     Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
+                    DelayMultipler.Value = Statics.JsonGetValueOrDefault(member, "Delay Multipler", 1);
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
@@ -475,6 +477,7 @@ namespace Multi_Account_Synchronizer
 
                     x.Item5.AddLog("Bot started", "Information");
                 }
+                x.Item5.StopAllBots = false;
                 x.Item5.LastPath = -1;
                 x.Item5.run = true;
                 x.Item5.Start();
@@ -491,7 +494,7 @@ namespace Multi_Account_Synchronizer
                     x.Item5.AddLog("Bot stopped", "Information");
                 }
                 x.Item5.run = false;
-
+                x.Item5.WorkingTimeSw.Stop();
             });
         }
 
@@ -561,6 +564,7 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
+                newItem.Add("Delay Multipler", ((int)api.Item6.numericUpDown1.Value));
                 newItem.Add("Otter", api.Item5.Otter);
                 newItem.Add("Panda", api.Item5.Panda);
                 newItem.Add("Path", api.Item6.textBox2.Text);
@@ -576,6 +580,19 @@ namespace Multi_Account_Synchronizer
         {
             if (apis.Count <= 0)
                 return;
+            string s = "Idle";
+            if (this.Text.Contains("Idle"))
+                s = "Idle";
+            else if (apis.Count(x => x.Item5.run) > 0)
+                s = "Running";
+            else if (apis.Count(x => !x.Item5.run) > 0)
+                s = "Stopped";
+            this.Text = $"MAS by Diartios1881 | {s}";
+            bool stopbots = false;
+            if (apis.Count(x => x.Item5.StopAllBots) > 0)
+            {
+                stopbots = true;
+            }
             var MinilandOwner = apis.Where(x => x.Item5.MinilandOwner).FirstOrDefault();
 
             bool timetobuff = false;
@@ -637,6 +654,13 @@ namespace Multi_Account_Synchronizer
             }
             foreach (var api in apis)
             {
+                if (stopbots)
+                {
+                    api.Item5.StopAllBots = false;
+                    api.Item5.run = false;
+                    api.Item5.AddLog("Bot stopped due to security reasons", "Security");
+                    api.Item5.WorkingTimeSw.Stop();
+                }
                 api.Item5.DefenceMob = defencemob;
                 api.Item5.HelpAmulet = HelpAmulet;
                 api.Item5.StartBuff = timetobuff;
@@ -701,7 +725,10 @@ namespace Multi_Account_Synchronizer
 
                     api.Item5.AddLog("Bot resumed", "Information");
                 }
+                api.Item5.StopAllBots = false;
                 api.Item5.run = true;
+                api.Item1.start_bot();
+                api.Item5.WorkingTimeSw.Start();
             }
         }
     }
