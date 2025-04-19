@@ -59,5 +59,15 @@ namespace Multi_Account_Synchronizer.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] maps {
+            get {
+                object obj = ResourceManager.GetObject("maps", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
