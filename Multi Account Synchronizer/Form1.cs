@@ -240,6 +240,7 @@ namespace Multi_Account_Synchronizer
             api.receive_message();
             handler.start();
             api.query_player_info();
+            api.query_map_entities();
             BotForm b = new BotForm(bot, player, scene, api);
 
             Label l1 = new Label();
@@ -372,7 +373,7 @@ namespace Multi_Account_Synchronizer
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
                     Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
                     Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
-                    DelayMultipler.Value = Statics.JsonGetValueOrDefault(member, "Delay Multipler", 1);
+                    DelayMultipler.Value = Convert.ToDecimal(Statics.JsonGetValueOrDefault(member, "Delay Multipler", 1.0));
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
@@ -415,6 +416,17 @@ namespace Multi_Account_Synchronizer
                 MessageBox.Show($"Invite command is empty. Go to settings and choose it.\nHere is the commands for every language:\n{allinvitestext}", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            else if (apis.Count(x => x.Item5.DPS && x.Item5.Path.Count == 0) > 0)
+            {
+                string accs = "";
+                foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.Path.Count == 0))
+                {
+                    accs += $"{a.Item3.name}, ";
+                }
+                accs = accs.Remove(accs.Length - 2);
+                MessageBox.Show($"Accounts {accs} has 0 walking points in path. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             else if (apis.Count(x => x.Item5.Path.Count(a => a.Kill) != killpointcount && x.Item5.DPS) > 0 && killpointcount != -1)
             {
                 string points = "";
@@ -448,17 +460,6 @@ namespace Multi_Account_Synchronizer
                 }
                 accs = accs.Remove(accs.Length - 2);
                 MessageBox.Show($"Accounts {accs} is on whitelist mode in combat and has 0 monsters in it. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            else if (apis.Count(x => x.Item5.DPS && x.Item5.Path.Count == 0) > 0)
-            {
-                string accs = "";
-                foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.Path.Count == 0))
-                {
-                    accs += $"{a.Item3.name}, ";
-                }
-                accs = accs.Remove(accs.Length - 2);
-                MessageBox.Show($"Accounts {accs} has 0 walking points in path. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else if (apis.Count > 0 && apis.Count(x => x.Item5.run) == 0)
@@ -564,7 +565,7 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
-                newItem.Add("Delay Multipler", ((int)api.Item6.numericUpDown1.Value));
+                newItem.Add("Delay Multipler", ((double)api.Item6.numericUpDown1.Value));
                 newItem.Add("Otter", api.Item5.Otter);
                 newItem.Add("Panda", api.Item5.Panda);
                 newItem.Add("Path", api.Item6.textBox2.Text);

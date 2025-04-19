@@ -73,6 +73,8 @@ namespace Multi_Account_Synchronizer
                             player.handle_inventory(zart);
                         if (((int)zurna["type"]) == ((int)PhoenixApi.Type.query_skills_info))
                             player.handle_skills(zart);
+                        if (((int)zurna["type"]) == ((int)PhoenixApi.Type.query_map_entities))
+                            scene.HandleMapEntities(zart);
                     }
                     catch (Exception e)
                     {
