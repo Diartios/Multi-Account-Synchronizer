@@ -102,6 +102,7 @@ namespace Multi_Account_Synchronizer
         public int AttackSearchRadius = 10;
         public bool AttackBlacklist = true;
         public bool AttackWhitelist = false;
+        public bool GameTarget = true;
         public bool Priority = false;
         public List<int> MonsterList = new List<int>();
         public bool IgnoreTarget = false;
@@ -139,7 +140,7 @@ namespace Multi_Account_Synchronizer
         #endregion
 
         #region Delay Variables
-        public int DelayMultipler = 1;
+        public double DelayMultipler = 1;
         public Tuple<int, int> MinilandExitDelay = new Tuple<int, int>(750, 2000);
         public Tuple<int, int> AmuletUseDelay = new Tuple<int, int>(750, 1450);
         public Tuple<int, int> StartAttackDelay = new Tuple<int, int>(1500, 2100);
@@ -203,10 +204,19 @@ namespace Multi_Account_Synchronizer
                 Api.player_walk(point.X + randx, point.Y + randy);
                 if (WalkWithPets)
                     Api.pets_walk(point.X + randx, point.Y + randy);
-                await Task.Delay(500);
+                for (int i = 0; i < 5; i++)
+                {
+                    await Task.Delay(100);
+                    if (Player.x == point.X + randx && Player.y == point.Y + randy)
+                    {
+                        break;
+                    }
+                        
+                }
 
             }
             int delay = Convert.ToInt32((WalkDelay * 1000));
+            await Task.Delay(370);
             await Task.Delay(delay);
             if (point.Kill)
             {
@@ -239,7 +249,7 @@ namespace Multi_Account_Synchronizer
                 return range.Item1;
 
             int delay = Random.Next(range.Item1, range.Item2);
-            return delay * DelayMultipler;
+            return Convert.ToInt32(delay * DelayMultipler);
         }
         public async Task Run()
         {
@@ -402,7 +412,7 @@ namespace Multi_Account_Synchronizer
                         while (Scene.EntityData.ContainsKey(entity.Id) && run && !map_changed)
                         {
                             HelpNeededMobId = entity.Id;
-                            Api.attack_monster(entity.Id);
+                            Api.attack_monster(entity.Id,GameTarget);
                             await Task.Delay(200);
                         }
                     }
@@ -501,7 +511,7 @@ namespace Multi_Account_Synchronizer
         {
             while (HelpAmulet && DefenceMob > 0 && !map_changed && run)
             {
-                Api.attack_monster(DefenceMob);
+                Api.attack_monster(DefenceMob,GameTarget);
                 await Task.Delay(200);
             }
             if (!run)
@@ -568,9 +578,20 @@ namespace Multi_Account_Synchronizer
                     if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
                     {
                         Scene.LootData.Remove(loot.Id);
+                        ignoreFlower = ShouldIgnoreFlower();
+                        loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
                         sw.Restart();
                     }
-                    Api.player_walk(loot.Pos.X, loot.Pos.Y);
+                    bool chance = Random.Next(0, 6) == 5;
+                    if (chance)
+                    {
+                        Api.pick_up(loot.Id);
+                    } 
+                    else
+                    {
+                        Api.player_walk(loot.Pos.X, loot.Pos.Y);
+                    }
+                    
                     await Task.Delay(100);
                     if (Statics.Distance(loot.Pos,new Point(Player.x,Player.y)) > Math.Sqrt(2))
                         await Task.Delay(150);
@@ -654,7 +675,7 @@ namespace Multi_Account_Synchronizer
             Stopwatch targetsw = Stopwatch.StartNew();
             int oldmob = LureMob;
             UseVoke = false;
-            UpdateVoke = true;
+            UpdateVoke   = true;
             while (LureMob > 0 && !map_changed && run)
             {
                 if (GoKite && KiteMob != null)
@@ -662,7 +683,7 @@ namespace Multi_Account_Synchronizer
                     WalkRangePoint(KiteMob.Pos, KeepDistanceValue);
                     GoKite = false;
                 }
-                Api.attack_monster(LureMob);
+                Api.attack_monster(LureMob, GameTarget);
                 await Task.Delay(200);
                 if (oldmob != LureMob)
                 {
@@ -888,7 +909,7 @@ namespace Multi_Account_Synchronizer
                     continue;
                 await Task.Delay(DelaySameKey * delayer);
                 AddLog("Using " + id.Item1, "Buff");
-                Api.send_packet($"u_s {id.Item2} 1 {Player.id}");
+                Api.use_player_skill(Player.id, id.Item2);
                 await Task.Delay(DelayDifferentKey);
             }
             Buffing = false;
@@ -932,6 +953,7 @@ namespace Multi_Account_Synchronizer
             IgnoreTargetValue = Statics.IniGetValueOrDefault(data, "Attack", "ignore_target_value", 10);
             KeepDistance = Statics.IniGetValueOrDefault(data, "Attack", "keep_distance", false);
             KeepDistanceValue = Statics.IniGetValueOrDefault(data, "Attack", "keep_distance_value", 0);
+            GameTarget = Statics.IniGetValueOrDefault(data, "Attack", "game_target", true);
             int monstersize = Statics.IniGetValueOrDefault(data, "Attack", "monsters\\size", 0);
             MonsterList.Clear();
             for (int i = 1; i <= monstersize; i++)

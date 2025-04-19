@@ -218,6 +218,32 @@ namespace Multi_Account_Synchronizer
                 random = new Random();
             return random.Next(0, 100) < percentage;
         }
+        public void HandleMapEntities(string data)
+        {
+            JObject entities = JObject.Parse(data);
+            EntityData.Clear();
+            LootData.Clear();
+            foreach (var monster in entities["monsters"])
+            {
+                int id = ((int)monster["id"]);
+                int x = ((int)monster["x"]);
+                int y = ((int)monster["y"]);
+                int vnum = ((int)monster["vnum"]);
+                Entities ent = new Entities { Id = id, Pos = new Point(x, y), Vnum = vnum };
+                EntityData[id] = ent;
+            }
+            foreach (var item in entities["items"])
+            {
+                int vnum = ((int)item["vnum"]);
+                int x = (int)item["x"];
+                int y = (int)item["y"];
+                int owner = ((int)item["owner_id"]);
+                int quantity = ((int)item["quantity"]);
+                int id = ((int)item["id"]);
+                Loot loot = new Loot(vnum, id, new Point(x, y), quantity, owner, DateTime.Now);
+                LootData[id] = loot;
+            }
+        }
         public void handle_packets(List<string> packet_splitted, string full_packet)
         {
             string header = packet_splitted[0];

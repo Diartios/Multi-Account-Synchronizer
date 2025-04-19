@@ -32,13 +32,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.roundedButton6 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton4 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton5 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton3 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,6 +81,11 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(520, 34);
             this.tableLayoutPanel2.TabIndex = 3;
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 250;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // roundedButton6
             // 
@@ -219,11 +224,6 @@
             this.roundedButton2.TextColor = System.Drawing.Color.White;
             this.roundedButton2.UseVisualStyleBackColor = false;
             this.roundedButton2.Click += new System.EventHandler(this.roundedButton2_Click);
-            // 
-            // timer1
-            // 
-            this.timer1.Interval = 250;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 

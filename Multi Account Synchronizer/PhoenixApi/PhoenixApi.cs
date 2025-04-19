@@ -101,13 +101,14 @@ namespace Multi_Account_Synchronizer
             send_data(zort);
         }
 
-        public void attack_monster(int monster_id, int entity_type = 3)
+        public void attack_monster(int monster_id, bool target = true, int entity_type = 3)
         {
             JObject paket = new JObject();
             paket["type"] = ((int)Type.attack);
             paket["monster_id"] = monster_id;
             string zort = paket.ToString();
-            target_entity(monster_id, entity_type);
+            if (target)
+                target_entity(monster_id, entity_type);
             send_data(zort);
         }
         public void target_entity(int entity_id, int entity_type = 3)
@@ -119,13 +120,14 @@ namespace Multi_Account_Synchronizer
             string zort = paket.ToString();
             send_data(zort);
         }
-        public void use_player_skill(int monster_id, int skill_id, int entity_type = 3)
+        public void use_player_skill(int monster_id, int skill_id, bool target = true, int entity_type = 3)
         {
             JObject paket = new JObject();
             paket["type"] = ((int)Type.player_skill);
             paket["monster_id"] = monster_id;
             paket["skill_id"] = skill_id;
-            target_entity(monster_id, entity_type);
+            if (target)
+                target_entity(monster_id, entity_type);
             string zort = paket.ToString();
             send_data(zort);
         }
