@@ -611,10 +611,12 @@ namespace Multi_Account_Synchronizer
                             CurrentLootId = lood.Id;
                             Api.pick_up(lood.Id);
                             await Task.Delay(100);
-                            if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
+                            if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(lood.Id))
                             {
-                                Scene.LootData.Remove(loot.Id);
+                                Scene.LootData.Remove(lood.Id);
                                 sw.Restart();
+                                ignoreFlower = ShouldIgnoreFlower();
+                                loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
                             }
                         }
                     }
