@@ -12,18 +12,18 @@ namespace Multi_Account_Synchronizer
 {
     internal partial class BotForm : Form
     {
-        public Bot bot;
+        public Bot Bot;
         public Player player;
         public Scene scene;
         PhoenixApi api;
         public BotForm(Bot b, Player p, Scene s, PhoenixApi api)
         {
-            bot = b;
+            Bot = b;
             player = p;
             this.api = api;
             scene = s;
             InitializeComponent();
-            bot.richTextBox1 = this.richTextBox1;
+            Bot.richTextBox1 = this.richTextBox1;
             Run();
         }
 
@@ -33,7 +33,7 @@ namespace Multi_Account_Synchronizer
                 await Task.Delay(1);
             while (true)
             {
-                this.Text = $"{player.name} | Working time: {bot.WorkingTimeSw.Elapsed.ToString(@"hh\:mm\:ss")}";
+                this.Text = $"{player.name} | Working time: {Bot.WorkingTimeSw.Elapsed.ToString(@"hh\:mm\:ss")}";
                 await Task.Delay(500);
             }
             
@@ -45,35 +45,44 @@ namespace Multi_Account_Synchronizer
             richTextBox1.ScrollToCaret();
         }
 
+
+
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            bot.DPS = radioButton1.Checked;
+            Bot.DPS = radioButton1.Checked;
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            bot.Buffer = radioButton2.Checked;
+            Bot.Buffer = radioButton2.Checked;
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            bot.MinilandOwner = radioButton3.Checked;
+            Bot.MinilandOwner = radioButton3.Checked;
         }
 
         private async void roundedButton1_Click(object sender, EventArgs e)
         {
+            UpdateComboBox();
+        }
+        private async void UpdateComboBox()
+        {
+            player.updated = false;
+            
             api.query_skills_info();
             comboBox1.Items.Clear();
-            player.updated = false;
             while (!player.updated)
                 await Task.Delay(1);
             foreach (var item in player.Skills)
             {
                 comboBox1.Items.Add(item.Item1);
             }
+            comboBox1.Items.Add("Partner Skill Q");
+            comboBox1.Items.Add("Partner Skill W");
+            comboBox1.Items.Add("Partner Skill E");
             comboBox1.SelectedIndex = comboBox1.Items.Count > 0 ? 0 : -1;
         }
-
         private void roundedButton2_Click(object sender, EventArgs e)
         {
             if (comboBox1.SelectedIndex < 0)
@@ -81,11 +90,35 @@ namespace Multi_Account_Synchronizer
             if (list.Items.Contains(comboBox1.SelectedItem))
                 return;
             list.Items.Add(comboBox1.SelectedItem);
-            bot.Buffs.Clear();
+            Bot.Buffs.Clear();
+            Bot.PartnerBuffs.Clear();
             foreach (string item in list.Items)
             {
-                var id = player.Skills.Where(t => t.Item1 == item).FirstOrDefault();
-                bot.Buffs.Add(id);
+                if (item.Contains("Partner"))
+                {
+                    char skill = item[14];
+                    switch (skill)
+                    {
+                        case 'Q':
+                            Bot.PartnerBuffs.Add(0);
+                            break;
+                        case 'W':
+                            Bot.PartnerBuffs.Add(1);
+                            break;
+                        case 'E':
+                            Bot.PartnerBuffs.Add(2);
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+                else
+                {
+                    var id = player.Skills.Where(t => t.Item1 == item).FirstOrDefault();
+                    Bot.Buffs.Add(id);
+                }
+                
             }
         }
 
@@ -96,17 +129,41 @@ namespace Multi_Account_Synchronizer
                 list.Items.RemoveAt(list.SelectedIndex);
 
             }
-            api.query_skills_info();
-            bot.Buffs.Clear();
             player.updated = false;
+            api.query_skills_info();
+            Bot.Buffs.Clear();
+            Bot.PartnerBuffs.Clear();
             while (!player.updated)
                 await Task.Delay(1);
             foreach (string item in list.Items)
             {
-                Tuple<string, int> tup = player.Skills.Where(t => t.Item1 == item).FirstOrDefault();
-                if (tup == null)
-                    continue;
-                bot.Buffs.Add(tup);
+                if (item.Contains("Partner"))
+                {
+                    char skill = item[14];
+                    switch (skill)
+                    {
+                        case 'Q':
+                            Bot.PartnerBuffs.Add(0);
+                            break;
+                        case 'W':
+                            Bot.PartnerBuffs.Add(1);
+                            break;
+                        case 'E':
+                            Bot.PartnerBuffs.Add(2);
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+                else
+                {
+                    Tuple<string, int> tup = player.Skills.Where(t => t.Item1 == item).FirstOrDefault();
+                    if (tup == null)
+                        continue;
+                    Bot.Buffs.Add(tup);
+                }
+               
             }
         }
 
@@ -120,8 +177,8 @@ namespace Multi_Account_Synchronizer
             if (result == DialogResult.Cancel)
                 return;
             textBox2.Text = o.FileName;
-            bot.ReadIni(textBox2.Text);
-            bot.CreateNewIni(textBox2.Text);
+            Bot.ReadIni(textBox2.Text);
+            Bot.CreateNewIni(textBox2.Text);
             MessageBox.Show("The Phoenix Bot profile has changed with the edited one. You can make changes in attack, items, security but do not save your new Phoenix Bot settings", "CAUTION", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
@@ -138,7 +195,7 @@ namespace Multi_Account_Synchronizer
                 }
             }
 
-            bot.Otter = OttercheckBox.Checked;
+            Bot.Otter = OttercheckBox.Checked;
         }
 
         private void PandaCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -156,12 +213,17 @@ namespace Multi_Account_Synchronizer
 
             }
 
-            bot.Panda = PandaCheckBox.Checked;
+            Bot.Panda = PandaCheckBox.Checked;
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            bot.DelayMultipler = (double)numericUpDown1.Value;
+            Bot.DelayMultipler = (double)numericUpDown1.Value;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Bot.SwordsmanSP1 = checkBox1.Checked;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Multi_Account_Synchronizer
         public Stopwatch Minilandsw = new Stopwatch();
         public bool ResetMinilandsw = false;
         public List<Tuple<string, int>> Buffs = new List<Tuple<string, int>>();
+        public List<int> PartnerBuffs = new List<int>();
         public bool Buffing = false;
         public bool StartBuff = false;
         public bool Invite = false;
@@ -71,6 +72,7 @@ namespace Multi_Account_Synchronizer
         #region Some Lure Shit
         public bool Otter = false;
         public bool Panda = false;
+        public bool SwordsmanSP1 = false;
         public bool UseVoke = false;
         public bool UpdateVoke = false;
         public int MinVokeMonsterCount = 6;
@@ -218,6 +220,7 @@ namespace Multi_Account_Synchronizer
             int delay = Convert.ToInt32((WalkDelay * 1000));
             await Task.Delay(370);
             await Task.Delay(delay);
+            await Task.Delay(DelayGenerator(point.MinDelay, point.MaxDelay));
             if (point.Kill)
             {
                 ReachedKillPoint = true;
@@ -250,6 +253,15 @@ namespace Multi_Account_Synchronizer
 
             int delay = Random.Next(range.Item1, range.Item2);
             return Convert.ToInt32(delay * DelayMultipler);
+        }
+        private int DelayGenerator(int minDelay, int maxDelay)
+        {
+            if (minDelay == 0 && maxDelay == 0)
+                return 0;
+            else if (minDelay == maxDelay)
+                return minDelay;
+            int delay = Random.Next(minDelay, maxDelay);
+            return delay;
         }
         public async Task Run()
         {
@@ -573,11 +585,14 @@ namespace Multi_Account_Synchronizer
             {
                 await Task.Delay(100);
                 
-                if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2))
+                if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2) && Scene.LootData.ContainsKey(loot.Id))
                 {
-                    if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(loot.Id))
+                    if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem)
                     {
-                        Scene.LootData.Remove(loot.Id);
+                        AddLog("Couldn't reach the loot", "Loot");
+                        if (Scene.LootData.ContainsKey(loot.Id))
+                            Scene.LootData.Remove(loot.Id);
+
                         ignoreFlower = ShouldIgnoreFlower();
                         loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
                         sw.Restart();
@@ -610,9 +625,10 @@ namespace Multi_Account_Synchronizer
                         {
                             CurrentLootId = lood.Id;
                             Api.pick_up(lood.Id);
-                            await Task.Delay(100);
+                            await Task.Delay(150);
                             if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem && Scene.LootData.ContainsKey(lood.Id))
                             {
+                                AddLog($"Couldn't pick up the loot with id {loot.Id}", "Loot");
                                 Scene.LootData.Remove(lood.Id);
                                 sw.Restart();
                                 ignoreFlower = ShouldIgnoreFlower();
@@ -624,7 +640,6 @@ namespace Multi_Account_Synchronizer
 
                 ignoreFlower = ShouldIgnoreFlower();
                 loot = Scene.GetLoot(LootSearchRadius, LootBlacklist, LootWhiteList, ignoreFlower, MyItems, GroupItems, NeutralItems, LootList);
-                sw.Restart();
                 await Task.Delay(10);
             }
             CurrentLootId = -1;
@@ -642,6 +657,25 @@ namespace Multi_Account_Synchronizer
             else if (Otter && Player.Pet.Skills.ContainsKey(663))
                 isReady = Player.Pet.Skills[663];
             return isReady;
+        }
+        private async Task<bool> IsSwordsmanVokeReady()
+        {
+            Player.updated = false;
+            Api.query_skills_info();
+            while (!Player.updated)
+                await Task.Delay(1);
+            return Player.SkillReady[4];
+        }
+        private async Task UseWarriorVoke()
+        {
+            var centerCoords = Scene.CenterCoords(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList);
+            await Walk(centerCoords.X, centerCoords.Y);
+            await Task.Delay(500);
+            for (int i = 0; i < 10; i++)
+            {
+                Api.use_player_skill(LureMob, 4,GameTarget);
+                await Task.Delay(100);
+            }
         }
         private async Task KillLure()
         {
@@ -696,6 +730,13 @@ namespace Multi_Account_Synchronizer
                 {
                     if (Scene.EntityData.ContainsKey(LureMob))
                         Scene.EntityData.Remove(LureMob);
+                }
+                if (SwordsmanSP1 && Scene.MonstersInRadius(Scene.CenterCoords(AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList).X,Scene.CenterCoords(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList).Y,AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList) >= MinVokeMonsterCount && luresw.Elapsed.TotalMilliseconds >= VokeDelay)
+                {
+                    if (await IsSwordsmanVokeReady())
+                    {
+                        await UseWarriorVoke();
+                    }
                 }
                 if (UseVoke && luresw.Elapsed.TotalMilliseconds >= VokeDelay)
                 {
@@ -903,6 +944,7 @@ namespace Multi_Account_Synchronizer
                 await Task.Delay(1);
             Buffing = true;
             await Task.Delay(DelaySameKey * delayer);
+            UsePartnerBuff();
             foreach (var id in Buffs)
             {
                 if (!Player.SkillReady.ContainsKey(id.Item2))
@@ -911,10 +953,23 @@ namespace Multi_Account_Synchronizer
                     continue;
                 await Task.Delay(DelaySameKey * delayer);
                 AddLog("Using " + id.Item1, "Buff");
-                Api.use_player_skill(Player.id, id.Item2);
+                Api.use_player_skill(Player.id, id.Item2,GameTarget);
                 await Task.Delay(DelayDifferentKey);
             }
             Buffing = false;
+        }
+        private async Task UsePartnerBuff()
+        {
+            if (!run)
+                return;
+            await Task.Delay(DelaySameKey * delayer);
+            foreach (var id in PartnerBuffs)
+            {
+                await Task.Delay(DelaySameKey * delayer);
+                AddLog($"Using partner skill {id}", "Partner Buff");
+                Api.use_partner_skill(Player.id, id);
+                await Task.Delay(DelayDifferentKey);
+            }
         }
         private async Task LeaveMini()
         {
@@ -1003,10 +1058,12 @@ namespace Multi_Account_Synchronizer
             {
                 int x = Statics.IniGetValueOrDefault(data, "Walking", $"path\\{i}\\x", -1);
                 int y = Statics.IniGetValueOrDefault(data, "Walking", $"path\\{i}\\y", -1);
+                int minDelay = Statics.IniGetValueOrDefault(data, "Walking", $"path\\{i}\\min_delay", 0);
+                int maxDelay = Statics.IniGetValueOrDefault(data, "Walking", $"path\\{i}\\max_delay", 0);
                 bool kill = Statics.IniGetValueOrDefault(data, "Walking", $"path\\{i}\\kill", false);
                 if (x == -1 || y == -1)
                     continue;
-                WalkPoint p = new WalkPoint(x, y, kill);
+                WalkPoint p = new WalkPoint(x, y, kill, minDelay, maxDelay);
                 Path.Add(p);
             }
             #endregion
