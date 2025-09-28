@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.IO.Compression;
 using System.Diagnostics;
 using IniParser.Model;
+using System.Drawing.Drawing2D;
 
 namespace Multi_Account_Synchronizer
 {
@@ -316,7 +317,7 @@ namespace Multi_Account_Synchronizer
             NumericUpDown DelayMultipler = b.numericUpDown1;
             CheckBox Otter = b.OttercheckBox;
             CheckBox Panda = b.PandaCheckBox;
-
+            CheckBox swordsmanSP1 = b.checkBox1;
             string path = "";
             using (StreamReader file = new StreamReader("Members.json"))
             {
@@ -373,6 +374,7 @@ namespace Multi_Account_Synchronizer
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
                     Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
                     Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
+                    swordsmanSP1.Checked = Statics.JsonGetValueOrDefault(member, "Swordsman SP1", false);
                     DelayMultipler.Value = Convert.ToDecimal(Statics.JsonGetValueOrDefault(member, "Delay Multipler", 1.0));
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
@@ -392,6 +394,30 @@ namespace Multi_Account_Synchronizer
                         bot.Buffs.Add(t);
                         b.list.Items.Add(t.Item1);
                     }
+                    if (member["Partner Buffs"] != null)
+                    {
+                        foreach (var item in member["Partner Buffs"])
+                        {
+                            b.list.Items.Add(item["Partner Skill"].ToString());
+                            char skill = item["Partner Skill"].ToString()[14];
+                            switch (skill)
+                            {
+                                case 'Q':
+                                    bot.PartnerBuffs.Add(0);
+                                    break;
+                                case 'W':
+                                    bot.PartnerBuffs.Add(1);
+                                    break;
+                                case 'E':
+                                    bot.PartnerBuffs.Add(2);
+                                    break;
+                                default:
+                                    break;
+
+                            }
+                        }
+                    }
+                    
                 }
             }
         }
@@ -550,6 +576,7 @@ namespace Multi_Account_Synchronizer
             foreach (var api in apis)
             {
                 JArray buffs = new JArray();
+                JArray partnerBuffs = new JArray();
                 foreach (var item in api.Item5.Buffs)
                 {
                     JObject i = new JObject();
@@ -558,6 +585,19 @@ namespace Multi_Account_Synchronizer
                     i.Add("id", id);
                     i.Add("name", name);
                     buffs.Add(i);
+                }
+                foreach (var item in api.Item5.PartnerBuffs)
+                {
+                    JObject i = new JObject();
+                    string name = "";
+                    if (item == 0)
+                        name = "Partner Skill Q";
+                    else if (item == 1)
+                        name = "Partner Skill W";
+                    else
+                        name = "Partner Skill E";
+                    i.Add("Partner Skill", name);
+                    partnerBuffs.Add(i);
                 }
                 JObject newItem = new JObject();
                 newItem.Add("name", api.Item3.name);
@@ -568,8 +608,10 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("Delay Multipler", ((double)api.Item6.numericUpDown1.Value));
                 newItem.Add("Otter", api.Item5.Otter);
                 newItem.Add("Panda", api.Item5.Panda);
+                newItem.Add("Swordsman SP1", api.Item5.SwordsmanSP1);
                 newItem.Add("Path", api.Item6.textBox2.Text);
                 newItem["buffs"] = buffs;
+                newItem["Partner Buffs"] = partnerBuffs;
                 players.Add(newItem);
                 content["Members"] = players;
             }

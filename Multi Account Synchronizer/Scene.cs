@@ -140,6 +140,34 @@ namespace Multi_Account_Synchronizer
                 return -1;
             }
         }
+        public Point CenterCoords(int radius, bool blacklist, bool whitelist, List<int> monsters)
+        {
+            try
+            {
+                List<Entities> ids = new List<Entities>();
+                foreach (Entities entity in EntityData.Values)
+                {
+                    if (blacklist && monsters.Contains(entity.Vnum))
+                        continue;
+                    if (whitelist && !monsters.Contains(entity.Vnum))
+                        continue;
+                    if (Statics.Distance(new Point(player.x, player.y), entity.Pos) > radius)
+                        continue;
+                    ids.Add(entity);
+                }
+                if (ids.Count <= 0)
+                    return new Point(-1, -1);
+                int x = ids.Sum(t => t.Pos.X);
+                int y = ids.Sum(t => t.Pos.Y);
+                int totalx = x / ids.Count;
+                int totaly = y / ids.Count;
+                return new Point(totalx, totaly);
+            }
+            catch (Exception)
+            {
+                return new Point(-1,-1);
+            }
+        }
         public Loot GetLoot(int radius, bool blacklist, bool whitelist, bool ignoreflowers, bool my, bool group, bool neutral, List<int> lootlist)
         {
             Loot resultloot = new Loot(-1, -1, new Point(-1, -1), 0, -1, DateTime.Now);

@@ -53,9 +53,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
-            this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
             this.roundedButton3 = new Multi_Account_Synchronizer.RoundedButton();
+            this.roundedButton2 = new Multi_Account_Synchronizer.RoundedButton();
+            this.roundedButton1 = new Multi_Account_Synchronizer.RoundedButton();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -89,14 +90,14 @@
             this.textBox2.Location = new System.Drawing.Point(82, 472);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(273, 20);
+            this.textBox2.Size = new System.Drawing.Size(401, 20);
             this.textBox2.TabIndex = 48;
             // 
             // radioButton1
             // 
             this.radioButton1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(48, 6);
+            this.radioButton1.Location = new System.Drawing.Point(69, 6);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(47, 17);
             this.radioButton1.TabIndex = 0;
@@ -122,14 +123,14 @@
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(431, 29);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(559, 29);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // radioButton3
             // 
             this.radioButton3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(309, 6);
+            this.radioButton3.Location = new System.Drawing.Point(416, 6);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(98, 17);
             this.radioButton3.TabIndex = 2;
@@ -142,7 +143,7 @@
             this.radioButton2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.radioButton2.AutoSize = true;
             this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(188, 6);
+            this.radioButton2.Location = new System.Drawing.Point(252, 6);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(53, 17);
             this.radioButton2.TabIndex = 1;
@@ -160,7 +161,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.White;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(443, 54);
+            this.groupBox2.Size = new System.Drawing.Size(571, 54);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Roles";
@@ -178,7 +179,7 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(449, 120);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(577, 120);
             this.tableLayoutPanel3.TabIndex = 47;
             // 
             // groupBox3
@@ -190,7 +191,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.White;
             this.groupBox3.Location = new System.Drawing.Point(3, 63);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(443, 54);
+            this.groupBox3.Size = new System.Drawing.Size(571, 54);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Non-Essential Settings";
@@ -200,27 +201,29 @@
             this.tableLayoutPanel5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel5.ColumnCount = 4;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.00062F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.99813F));
+            this.tableLayoutPanel5.ColumnCount = 5;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.0005F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.0005F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.0005F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.9985F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel5.Controls.Add(this.checkBox1, 2, 0);
             this.tableLayoutPanel5.Controls.Add(this.PandaCheckBox, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.OttercheckBox, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.numericUpDown1, 3, 0);
-            this.tableLayoutPanel5.Controls.Add(this.label2, 2, 0);
+            this.tableLayoutPanel5.Controls.Add(this.numericUpDown1, 4, 0);
+            this.tableLayoutPanel5.Controls.Add(this.label2, 3, 0);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(6, 17);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(431, 29);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(559, 29);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // PandaCheckBox
             // 
             this.PandaCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.PandaCheckBox.AutoSize = true;
-            this.PandaCheckBox.Location = new System.Drawing.Point(132, 6);
+            this.PandaCheckBox.Location = new System.Drawing.Point(138, 6);
             this.PandaCheckBox.Name = "PandaCheckBox";
             this.PandaCheckBox.Size = new System.Drawing.Size(57, 17);
             this.PandaCheckBox.TabIndex = 1;
@@ -232,7 +235,7 @@
             // 
             this.OttercheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.OttercheckBox.AutoSize = true;
-            this.OttercheckBox.Location = new System.Drawing.Point(29, 6);
+            this.OttercheckBox.Location = new System.Drawing.Point(31, 6);
             this.OttercheckBox.Name = "OttercheckBox";
             this.OttercheckBox.Size = new System.Drawing.Size(49, 17);
             this.OttercheckBox.TabIndex = 0;
@@ -249,7 +252,7 @@
             0,
             0,
             65536});
-            this.numericUpDown1.Location = new System.Drawing.Point(324, 4);
+            this.numericUpDown1.Location = new System.Drawing.Point(449, 4);
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(104, 20);
             this.numericUpDown1.TabIndex = 2;
@@ -264,7 +267,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(228, 8);
+            this.label2.Location = new System.Drawing.Point(349, 8);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 3;
@@ -279,7 +282,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(3, 16);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(438, 100);
+            this.richTextBox1.Size = new System.Drawing.Size(566, 100);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "";
             // 
@@ -292,7 +295,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.White;
             this.groupBox1.Location = new System.Drawing.Point(3, 128);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(444, 119);
+            this.groupBox1.Size = new System.Drawing.Size(572, 119);
             this.groupBox1.TabIndex = 27;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Logs";
@@ -323,7 +326,7 @@
             this.list.FormattingEnabled = true;
             this.list.Location = new System.Drawing.Point(3, 3);
             this.list.Name = "list";
-            this.list.Size = new System.Drawing.Size(444, 119);
+            this.list.Size = new System.Drawing.Size(572, 119);
             this.list.TabIndex = 26;
             // 
             // tableLayoutPanel1
@@ -341,14 +344,14 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(450, 250);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(578, 250);
             this.tableLayoutPanel1.TabIndex = 46;
             // 
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(30, 10);
+            this.label1.Location = new System.Drawing.Point(43, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 35;
@@ -362,9 +365,9 @@
             this.comboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBox1.ForeColor = System.Drawing.Color.White;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(92, 6);
+            this.comboBox1.Location = new System.Drawing.Point(118, 6);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(173, 21);
+            this.comboBox1.Size = new System.Drawing.Size(224, 21);
             this.comboBox1.TabIndex = 37;
             // 
             // tableLayoutPanel2
@@ -382,31 +385,30 @@
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(449, 34);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(577, 34);
             this.tableLayoutPanel2.TabIndex = 45;
             // 
-            // roundedButton1
+            // roundedButton3
             // 
-            this.roundedButton1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.roundedButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton1.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.roundedButton1.BorderRadius = 10;
-            this.roundedButton1.BorderSize = 0;
-            this.roundedButton1.FlatAppearance.BorderSize = 0;
-            this.roundedButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
-            this.roundedButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
-            this.roundedButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundedButton1.ForeColor = System.Drawing.Color.White;
-            this.roundedButton1.Location = new System.Drawing.Point(271, 4);
-            this.roundedButton1.Name = "roundedButton1";
-            this.roundedButton1.Size = new System.Drawing.Size(175, 27);
-            this.roundedButton1.TabIndex = 38;
-            this.roundedButton1.Text = "Refresh";
-            this.roundedButton1.TextColor = System.Drawing.Color.White;
-            this.roundedButton1.UseVisualStyleBackColor = false;
-            this.roundedButton1.Click += new System.EventHandler(this.roundedButton1_Click);
+            this.roundedButton3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.roundedButton3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton3.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton3.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundedButton3.BorderRadius = 10;
+            this.roundedButton3.BorderSize = 0;
+            this.roundedButton3.FlatAppearance.BorderSize = 0;
+            this.roundedButton3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
+            this.roundedButton3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
+            this.roundedButton3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundedButton3.ForeColor = System.Drawing.Color.White;
+            this.roundedButton3.Location = new System.Drawing.Point(490, 469);
+            this.roundedButton3.Name = "roundedButton3";
+            this.roundedButton3.Size = new System.Drawing.Size(91, 24);
+            this.roundedButton3.TabIndex = 51;
+            this.roundedButton3.Text = "Browse files";
+            this.roundedButton3.TextColor = System.Drawing.Color.White;
+            this.roundedButton3.UseVisualStyleBackColor = false;
+            this.roundedButton3.Click += new System.EventHandler(this.roundedButton3_Click);
             // 
             // roundedButton2
             // 
@@ -424,41 +426,54 @@
             this.roundedButton2.ForeColor = System.Drawing.Color.White;
             this.roundedButton2.Location = new System.Drawing.Point(9, 50);
             this.roundedButton2.Name = "roundedButton2";
-            this.roundedButton2.Size = new System.Drawing.Size(449, 31);
+            this.roundedButton2.Size = new System.Drawing.Size(577, 31);
             this.roundedButton2.TabIndex = 50;
             this.roundedButton2.Text = "Add skill to list";
             this.roundedButton2.TextColor = System.Drawing.Color.White;
             this.roundedButton2.UseVisualStyleBackColor = false;
             this.roundedButton2.Click += new System.EventHandler(this.roundedButton2_Click);
             // 
-            // roundedButton3
+            // roundedButton1
             // 
-            this.roundedButton3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.roundedButton3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton3.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
-            this.roundedButton3.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.roundedButton3.BorderRadius = 10;
-            this.roundedButton3.BorderSize = 0;
-            this.roundedButton3.FlatAppearance.BorderSize = 0;
-            this.roundedButton3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
-            this.roundedButton3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
-            this.roundedButton3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.roundedButton3.ForeColor = System.Drawing.Color.White;
-            this.roundedButton3.Location = new System.Drawing.Point(362, 469);
-            this.roundedButton3.Name = "roundedButton3";
-            this.roundedButton3.Size = new System.Drawing.Size(91, 24);
-            this.roundedButton3.TabIndex = 51;
-            this.roundedButton3.Text = "Browse files";
-            this.roundedButton3.TextColor = System.Drawing.Color.White;
-            this.roundedButton3.UseVisualStyleBackColor = false;
-            this.roundedButton3.Click += new System.EventHandler(this.roundedButton3_Click);
+            this.roundedButton1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.roundedButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(102)))), ((int)(((byte)(241)))));
+            this.roundedButton1.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.roundedButton1.BorderRadius = 10;
+            this.roundedButton1.BorderSize = 0;
+            this.roundedButton1.FlatAppearance.BorderSize = 0;
+            this.roundedButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(66)))), ((int)(((byte)(70)))), ((int)(((byte)(237)))));
+            this.roundedButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(78)))), ((int)(((byte)(82)))), ((int)(((byte)(239)))));
+            this.roundedButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.roundedButton1.ForeColor = System.Drawing.Color.White;
+            this.roundedButton1.Location = new System.Drawing.Point(348, 4);
+            this.roundedButton1.Name = "roundedButton1";
+            this.roundedButton1.Size = new System.Drawing.Size(226, 27);
+            this.roundedButton1.TabIndex = 38;
+            this.roundedButton1.Text = "Refresh";
+            this.roundedButton1.TextColor = System.Drawing.Color.White;
+            this.roundedButton1.UseVisualStyleBackColor = false;
+            this.roundedButton1.Click += new System.EventHandler(this.roundedButton1_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(225, 6);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(104, 17);
+            this.checkBox1.TabIndex = 4;
+            this.checkBox1.Text = "Swordsman SP1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // BotForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(471, 497);
+            this.ClientSize = new System.Drawing.Size(599, 497);
             this.Controls.Add(this.roundedButton3);
             this.Controls.Add(this.roundedButton2);
             this.Controls.Add(this.label10);
@@ -517,5 +532,6 @@
         public System.Windows.Forms.CheckBox OttercheckBox;
         public System.Windows.Forms.NumericUpDown numericUpDown1;
         public System.Windows.Forms.Label label2;
+        public System.Windows.Forms.CheckBox checkBox1;
     }
 }

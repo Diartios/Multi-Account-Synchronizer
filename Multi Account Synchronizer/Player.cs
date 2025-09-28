@@ -111,6 +111,8 @@ namespace Multi_Account_Synchronizer
                 handle_pst(packet_splitted, full_packet);
             else if (header == "qstlist")
                 handle_qstlist(packet_splitted, full_packet);
+            else if (header == "su")
+                HandleSu(packet_splitted, full_packet);
         }
         private void handle_qstlist(List<string> packet_splitted, string full_packet)
         {
@@ -280,6 +282,14 @@ namespace Multi_Account_Synchronizer
             id = ((int)player_info["player_info"]["id"]);
             map_id = ((int)player_info["player_info"]["map_id"]);
             all = playe_info;
+        }
+        private void HandleSu(List<string> packetSplitted, string fullPacket)
+        {
+            //su 2 id 3 id 1714 650 12 8026 39 27 1 98 2057 0 0 438267 443698
+            if (packetSplitted[1] == "2" && packetSplitted[2] == Pet.Id.ToString() && packetSplitted[3] == "3" && packetSplitted[5] == "1714")
+            {
+                Pet.Skills[1714] = false;
+            }
         }
         public void handle_cond(List<string> packet_splitted, string full_packet)
         {
