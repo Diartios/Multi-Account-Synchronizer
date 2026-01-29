@@ -170,7 +170,7 @@ namespace Multi_Account_Synchronizer
             Stopwatch s = Stopwatch.StartNew();
             map_changed = false;
             AddLog($"Walking to {x} | {y}", "Walk");
-            while ((Player.x != x || Player.y != y) && !map_changed)
+            while ((Player.X != x || Player.Y != y) && !map_changed)
             {
                 Api.player_walk(x, y);
                 Api.pets_walk(x, y);
@@ -180,10 +180,10 @@ namespace Multi_Account_Synchronizer
         }
         private async Task Walk(WalkPoint point)
         {
-            if (LastLoadedMap != Player.map_id && Player.map_id != 20001)
+            if (LastLoadedMap != Player.MapId && Player.MapId != 20001)
             {
-                CurrentMap = Statics.LoadMap(Player.map_id);
-                LastLoadedMap = Player.map_id;
+                CurrentMap = Statics.LoadMap(Player.MapId);
+                LastLoadedMap = Player.MapId;
             }
             ReachedKillPoint = false;
             map_changed = false;
@@ -201,7 +201,7 @@ namespace Multi_Account_Synchronizer
                 randy = 0;
             }    
             AddLog($"Walking to {point.X + randx} | {point.Y + randy}", "Walk");
-            while ((Player.x != point.X + randx || Player.y != point.Y + randy) && !map_changed && run)
+            while ((Player.X != point.X + randx || Player.Y != point.Y + randy) && !map_changed && run)
             {
                 Api.player_walk(point.X + randx, point.Y + randy);
                 if (WalkWithPets)
@@ -209,7 +209,7 @@ namespace Multi_Account_Synchronizer
                 for (int i = 0; i < 5; i++)
                 {
                     await Task.Delay(100);
-                    if (Player.x == point.X + randx && Player.y == point.Y + randy)
+                    if (Player.X == point.X + randx && Player.Y == point.Y + randy)
                     {
                         break;
                     }
@@ -310,7 +310,7 @@ namespace Multi_Account_Synchronizer
                         {
                             await Task.Delay(Random.Next(600, 1400));
                         }
-                        if (Player.map_id == 20001 && run && StartBuff)
+                        if (Player.MapId == 20001 && run && StartBuff)
                         {
                             await MinilandDPS();
                         }
@@ -480,9 +480,9 @@ namespace Multi_Account_Synchronizer
             while (!map_changed && run)
             {
                 AddLog("Trying to use amulet", "Amulet");
-                Api.send_packet($"u_i 1 {Player.id} 2 {item.Pos} 0 0");
+                Api.send_packet($"u_i 1 {Player.Id} 2 {item.Pos} 0 0");
                 await Task.Delay(1000);
-                Api.send_packet($"#u_i^1^{Player.id}^2^{item.Pos}^1");
+                Api.send_packet($"#u_i^1^{Player.Id}^2^{item.Pos}^1");
                 for (int i = 0; i < 90; i++)
                 {
                     if (HelpAmulet || map_changed || Scene.LastAttacks.Count > 0 || !run)
@@ -585,7 +585,7 @@ namespace Multi_Account_Synchronizer
             {
                 await Task.Delay(100);
                 
-                if (Statics.Distance(loot.Pos, new Point(Player.x, Player.y)) > Math.Sqrt(2) && Scene.LootData.ContainsKey(loot.Id))
+                if (Statics.Distance(loot.Pos, new Point(Player.X, Player.Y)) > Math.Sqrt(2) && Scene.LootData.ContainsKey(loot.Id))
                 {
                     if (sw.Elapsed.TotalSeconds >= IgnoreTıme && IgnoreItem)
                     {
@@ -608,7 +608,7 @@ namespace Multi_Account_Synchronizer
                     }
                     
                     await Task.Delay(100);
-                    if (Statics.Distance(loot.Pos,new Point(Player.x,Player.y)) > Math.Sqrt(2))
+                    if (Statics.Distance(loot.Pos,new Point(Player.X,Player.Y)) > Math.Sqrt(2))
                         await Task.Delay(150);
                 }
                 else
@@ -744,7 +744,7 @@ namespace Multi_Account_Synchronizer
                     {
                         Api.use_pet_skill(LureMob, 1714);
                     }
-                    if (Otter && IsVokeReady() && Scene.MonstersInRadius(Player.x,Player.y,AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList) >= MinVokeMonsterCount)
+                    if (Otter && IsVokeReady() && Scene.MonstersInRadius(Player.X,Player.Y,AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList) >= MinVokeMonsterCount)
                     {
                         var mob = Scene.EntityData.Values.Where(x => x.Id == LureMob).FirstOrDefault();
                         if (mob != null)
@@ -802,7 +802,7 @@ namespace Multi_Account_Synchronizer
             WaitingForMiniland = true;
             AddLog("Going to Miniland", "Miniland DPS");
             map_changed = false;
-            while (Player.map_id != 20001 && !map_changed && run)
+            while (Player.MapId != 20001 && !map_changed && run)
                 await Task.Delay(100);
             if (!run)
             {
@@ -811,7 +811,7 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            if (Player.map_id != 20001)
+            if (Player.MapId != 20001)
             {
                 WaitingForMiniland = false;
                 ResetMinilandsw = true;
@@ -854,7 +854,7 @@ namespace Multi_Account_Synchronizer
             WaitingForMiniland = true;
             AddLog("Going to Miniland", "Miniland Stop DPS");
             map_changed = false;
-            while (Player.map_id != 20001 && !map_changed && run)
+            while (Player.MapId != 20001 && !map_changed && run)
                 await Task.Delay(100);
             if (!run)
             {
@@ -862,7 +862,7 @@ namespace Multi_Account_Synchronizer
                 Stop();
                 return;
             }
-            if (Player.map_id != 20001)
+            if (Player.MapId != 20001)
             {
                 WaitingForMiniland = false;
                 return;
@@ -953,7 +953,7 @@ namespace Multi_Account_Synchronizer
                     continue;
                 await Task.Delay(DelaySameKey * delayer);
                 AddLog("Using " + id.Item1, "Buff");
-                Api.use_player_skill(Player.id, id.Item2,GameTarget);
+                Api.use_player_skill(Player.Id, id.Item2,GameTarget);
                 await Task.Delay(DelayDifferentKey);
             }
             Buffing = false;
@@ -967,7 +967,7 @@ namespace Multi_Account_Synchronizer
             {
                 await Task.Delay(DelaySameKey * delayer);
                 AddLog($"Using partner skill {id}", "Partner Buff");
-                Api.use_partner_skill(Player.id, id);
+                Api.use_partner_skill(Player.Id, id);
                 await Task.Delay(DelayDifferentKey);
             }
         }
@@ -979,7 +979,7 @@ namespace Multi_Account_Synchronizer
             int y = 8 + Random.Next(-1, 2);
             Stopwatch sw = Stopwatch.StartNew();
             await Task.Delay(DelayGenerator(MinilandExitDelay));
-            while (Player.map_id == 20001)
+            while (Player.MapId == 20001)
             {
                 Api.player_walk(x, y);
                 Api.pets_walk(x, y);
@@ -1123,8 +1123,6 @@ namespace Multi_Account_Synchronizer
                 return;
             Api.stop_bot();
             Api.load_settings(newpath);
-            await Task.Delay(10 * 1000);
-            File.Delete(newpath);
         }
         double RandomDegreeToRadian(double degreeMin, double degreeMax)
         {
@@ -1138,7 +1136,7 @@ namespace Multi_Account_Synchronizer
         }
         private async Task WalkRangePoint(Point p, double distance)
         {
-            double radian = Math.Atan2(Player.y - p.Y, Player.x - p.X);
+            double radian = Math.Atan2(Player.Y - p.Y, Player.X - p.X);
             radian += RandomDegreeToRadian(-30, 30);
             int cos = (int)Math.Round((Math.Cos(radian) * distance));
             int sin = (int)Math.Round(Math.Sin(radian) * distance);
@@ -1213,7 +1211,7 @@ namespace Multi_Account_Synchronizer
             if (packet_splitted.Count < 5)
                 return;
             //this item belongs to different party
-            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.id.ToString() && packet_splitted[4] == "544")
+            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.Id.ToString() && packet_splitted[4] == "544")
             {
                 if (CurrentLootId == -1)
                     return;
@@ -1225,9 +1223,9 @@ namespace Multi_Account_Synchronizer
 
         private void handle_su(List<string> packet_splitted, string full_packet)
         {
-            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.id.ToString() && packet_splitted[3] == "3")
+            if (packet_splitted[1] == "1" && packet_splitted[2] == Player.Id.ToString() && packet_splitted[3] == "3")
             {
-                if (Player.map_id == 20001 || KeepDistanceValue == 0 || !KeepDistance || !run)
+                if (Player.MapId == 20001 || KeepDistanceValue == 0 || !KeepDistance || !run)
                     return;
                 Attacked = true;
                 int x;
@@ -1239,13 +1237,13 @@ namespace Multi_Account_Synchronizer
                 }
                 else
                 {
-                    int atanx = Player.x - entity.Pos.X;
-                    int atany = Player.y - entity.Pos.Y;
+                    int atanx = Player.X - entity.Pos.X;
+                    int atany = Player.Y - entity.Pos.Y;
                     double radian = Math.Atan2(atany, atanx);
                     int cosx = (int)Math.Round(Math.Cos(radian));
                     int sinx = (int)Math.Round(Math.Sin(radian));
-                    x = Player.x + cosx;
-                    y = Player.y + sinx;
+                    x = Player.X + cosx;
+                    y = Player.Y + sinx;
 
                 }
 
