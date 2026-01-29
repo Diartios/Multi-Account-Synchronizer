@@ -49,6 +49,8 @@ namespace Multi_Account_Synchronizer
         public int DelayDifferentKey = 2000;
         public List<string> DPSAccounts = new List<string>();
         public bool MiniEnabled = false;
+        public bool MiniOnWaypoint = false;
+        public int MiniWaypointIndex = -1;
 
         public bool DPS = false;
         public bool Buffer = true;
@@ -306,6 +308,7 @@ namespace Multi_Account_Synchronizer
                             }
 
                         }
+
                         if (i == 0)
                         {
                             await Task.Delay(Random.Next(600, 1400));
@@ -323,6 +326,26 @@ namespace Multi_Account_Synchronizer
                         Finished = false;
                         WalkPoint p = Path[i];
                         await Walk(p);
+                        if (i == MiniWaypointIndex && MiniOnWaypoint)
+                        {
+                            UpdateBuff = true;
+                            while (UpdateBuff && run)
+                                await Task.Delay(100);
+                            if (!run)
+                            {
+                                Stop();
+                                break;
+                            }
+                            if (ShouldStop)
+                            {
+                                await MinilandStopDPS();
+                            }
+                            else if (EnterMini)
+                            {
+                                await MinilandDPS();
+                            }
+
+                        }
                         //wait respawn
                         if (WaitRespawn && Scene.CenterMob(AttackSearchRadius, AttackBlacklist, AttackWhitelist, MonsterList, Priority) <= 0 && run && i == 0)
                         {
@@ -1073,6 +1096,8 @@ namespace Multi_Account_Synchronizer
             MinilandInterval = Statics.IniGetValueOrDefault(data, "Miniland", "delay", 300);
             DelaySameKey = Statics.IniGetValueOrDefault(data, "Miniland", "same_key_delay", 200);
             DelayDifferentKey = Statics.IniGetValueOrDefault(data, "Miniland", "diff_key_delay", 2000);
+            MiniOnWaypoint = Statics.IniGetValueOrDefault(data, "Miniland", "miniland_on_waypoint", false);
+            MiniWaypointIndex = Statics.IniGetValueOrDefault(data, "Miniland", "miniland_waypoint_index", -1);
             #endregion
 
             #region Security
@@ -1110,7 +1135,8 @@ namespace Multi_Account_Synchronizer
             data["Walking"]["path\\size"] = "0";
 
             data["Miniland"]["enabled"] = "false";
-
+            data["Miniland"]["miniland_on_waypoint"] = "false";
+            data["Miniland"]["miniland_waypoint_index"] = "-1";
             string newpath = path.Replace(".ini", "");
             newpath = $"{newpath} Sync.ini";
             if (File.Exists(newpath))

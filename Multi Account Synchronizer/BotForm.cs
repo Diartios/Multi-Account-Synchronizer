@@ -221,7 +221,8 @@ namespace Multi_Account_Synchronizer
             data["Walking"]["path\\size"] = $"{Bot.Path.Count + 1}";
 
             data["Miniland"]["enabled"] = Bot.MiniEnabled.ToString().ToLower();
-
+            data["Miniland"]["miniland_on_waypoint"] = Bot.MiniOnWaypoint.ToString().ToLower();
+            data["Miniland"]["miniland_waypoint_index"] = Bot.MiniWaypointIndex.ToString();
             string newpath = path.Replace(".ini", "");
             newpath = $"{newpath} Reloaded.ini";
             if (File.Exists(newpath))
