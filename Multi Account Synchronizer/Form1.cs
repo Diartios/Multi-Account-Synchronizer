@@ -658,12 +658,13 @@ namespace Multi_Account_Synchronizer
                 while (!MinilandOwner.Item3.updated && sw.Elapsed.TotalSeconds <= 5)
                     await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
-                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS && x.Item5.MiniEnabled).Select(x => x.Item3.Name).ToList();
+                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS && (x.Item5.MiniEnabled || x.Item5.MiniOnWaypoint)).Select(x => x.Item3.Name).ToList();
                 timetobuff = apis.Count(x => x.Item3.MapId == 20001) == apis.Count();
-                invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
+                invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && (x.Item5.MiniEnabled || x.Item5.MiniOnWaypoint)) == apis.Count(x => x.Item5.DPS && (x.Item5.MiniEnabled || x.Item5.MiniOnWaypoint));
                 leavemini = apis.Count(x => x.Item5.Buffing) == 0;
                 minilandownernick = MinilandOwner.Item3.Name;
-                entermini = apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
+                entermini = (apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 || apis.Count(x => x.Item5.MiniOnWaypoint && x.Item5.LastPath == x.Item5.MiniWaypointIndex && x.Item5.DPS) == apis.Count(x => x.Item5.MiniOnWaypoint && x.Item5.DPS)) && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
+
             }
 
             bool updatemini = apis.Count(x => x.Item5.UpdateBuff && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
