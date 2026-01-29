@@ -29,7 +29,7 @@ namespace Multi_Account_Synchronizer
             {
                 foreach (Entities entity in EntityData.Values)
                 {
-                    double distance = Math.Sqrt(Math.Pow(player.x - entity.Pos.X, 2) + Math.Pow(player.y - entity.Pos.Y, 2));
+                    double distance = Math.Sqrt(Math.Pow(player.X - entity.Pos.X, 2) + Math.Pow(player.Y - entity.Pos.Y, 2));
                     if (distance < maxdistance)
                     {
                         maxdistance = distance;
@@ -97,7 +97,7 @@ namespace Multi_Account_Synchronizer
                         continue;
                     if (whitelist && !monsters.Contains(entity.Vnum))
                         continue;
-                    if (Statics.Distance(new Point(player.x, player.y), entity.Pos) > radius)
+                    if (Statics.Distance(new Point(player.X, player.Y), entity.Pos) > radius)
                         continue;
                     ids.Add(entity);
                 }
@@ -151,7 +151,7 @@ namespace Multi_Account_Synchronizer
                         continue;
                     if (whitelist && !monsters.Contains(entity.Vnum))
                         continue;
-                    if (Statics.Distance(new Point(player.x, player.y), entity.Pos) > radius)
+                    if (Statics.Distance(new Point(player.X, player.Y), entity.Pos) > radius)
                         continue;
                     ids.Add(entity);
                 }
@@ -174,14 +174,14 @@ namespace Multi_Account_Synchronizer
             double maxdistance = 1000;
             List<int> owners = new List<int>();
             if (my)
-                owners.Add(player.id);
+                owners.Add(player.Id);
             if (group)
                 owners.Add(-1);
             if (neutral)
                 owners.Add(0);
             foreach (Loot loot in LootData.Values)
             {
-                if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > radius)
+                if (Statics.Distance(new Point(player.X, player.Y), loot.Pos) > radius)
                     continue;
                 if (blacklist && lootlist.Contains(loot.Vnum))
                     continue;
@@ -191,7 +191,7 @@ namespace Multi_Account_Synchronizer
                     continue;
                 if (!owners.Contains(loot.Owner))
                     continue;
-                double distance = Statics.Distance(new Point(player.x, player.y), loot.Pos);
+                double distance = Statics.Distance(new Point(player.X, player.Y), loot.Pos);
                 if (distance < maxdistance)
                 {
                     maxdistance = distance;
@@ -207,7 +207,7 @@ namespace Multi_Account_Synchronizer
             List<int> owners = new List<int>();
             bool addedFlower = false;
             if (my)
-                owners.Add(player.id);
+                owners.Add(player.Id);
             if (group)
                 owners.Add(-1);
             if (neutral)
@@ -219,7 +219,7 @@ namespace Multi_Account_Synchronizer
                     trashItemChance = false;
                 else if (lootlist.Count == 1 && lootlist.Contains(1086) && whitelist)
                     trashItemChance = false;
-                if (Statics.Distance(new Point(player.x, player.y), loot.Pos) > Math.Sqrt(2))
+                if (Statics.Distance(new Point(player.X, player.Y), loot.Pos) > Math.Sqrt(2))
                     continue;
                 if (blacklist && lootlist.Contains(loot.Vnum) && !trashItemChance)
                     continue;
@@ -400,7 +400,7 @@ namespace Multi_Account_Synchronizer
                     if (EntityData.ContainsKey(id))
                         EntityData.Remove(id);
                 }
-                if (packet_splitted[1] == "3" && type == 1 && id == player.id)
+                if (packet_splitted[1] == "3" && type == 1 && id == player.Id)
                 {
                     int attackerid = int.Parse(packet_splitted[2]);
                     Entities entities = new Entities { Id = attackerid, LastAttack = DateTime.Now };

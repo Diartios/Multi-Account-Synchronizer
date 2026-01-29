@@ -1,8 +1,12 @@
-﻿using System;
+﻿using IniParser.Model;
+using IniParser;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,11 +33,11 @@ namespace Multi_Account_Synchronizer
 
         private async void Run()
         {
-            while (player.name == "")
+            while (player.Name == "")
                 await Task.Delay(1);
             while (true)
             {
-                this.Text = $"{player.name} | Working time: {Bot.WorkingTimeSw.Elapsed.ToString(@"hh\:mm\:ss")}";
+                this.Text = $"{player.Name} | Working time: {Bot.WorkingTimeSw.Elapsed.ToString(@"hh\:mm\:ss")}";
                 await Task.Delay(500);
             }
             
@@ -179,9 +183,76 @@ namespace Multi_Account_Synchronizer
             textBox2.Text = o.FileName;
             Bot.ReadIni(textBox2.Text);
             Bot.CreateNewIni(textBox2.Text);
-            MessageBox.Show("The Phoenix Bot profile has changed with the edited one. You can make changes in attack, items, security but do not save your new Phoenix Bot settings", "CAUTION", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("The Phoenix Bot profile has changed(deleted path in current settings, made combat and loot whitelist and empty). DO NOT SAVE THE CHANGED PROFILE OVER YOUR ORIGINAL ONE", "CAUTION", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
+        private void roundedButton4_Click(object sender, EventArgs e)
+        {
+            if (Bot.run)
+            {
+                MessageBox.Show("You cannot use that function while running the MAS","Profile",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var res = MessageBox.Show("This option rolls back to your original Phoenix Bot profile. Are you sure about that?", "Profile", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (res == DialogResult.No)
+                return;
+            string path = textBox2.Text;
+            string newpath = path.Replace(".ini", "");
+            newpath = $"{newpath} Sync.ini";
+            ReloadSettings(newpath);
+        }
+        private async void ReloadSettings(string path)
+        {
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("Couldn't reload the Phoenix Bot profile", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var parser = new FileIniDataParser();
+            IniData data = parser.ReadFile(path);
 
+            data["Attack"]["blacklist"] = Bot.AttackBlacklist.ToString().ToLower();
+            data["Attack"]["whitelist"] = Bot.AttackWhitelist.ToString().ToLower();
+            data["Attack"]["monsters\\size"] = $"{Bot.MonsterList.Count + 1}";
+
+            data["Loot"]["blacklist"] = Bot.LootBlacklist.ToString().ToLower();
+            data["Loot"]["whitelist"] = Bot.LootWhiteList.ToString().ToLower();
+            data["Loot"]["loot_items\\size"] = $"{Bot.LootList.Count + 1}";
+
+            data["Walking"]["path\\size"] = $"{Bot.Path.Count + 1}";
+
+            data["Miniland"]["enabled"] = Bot.MiniEnabled.ToString().ToLower();
+
+            string newpath = path.Replace(".ini", "");
+            newpath = $"{newpath} Reloaded.ini";
+            if (File.Exists(newpath))
+                File.Delete(newpath);
+            File.WriteAllText(newpath, data.ToString());
+            Stopwatch sw = Stopwatch.StartNew();
+            while (!File.Exists(newpath) && sw.Elapsed.TotalSeconds < 5)
+                await Task.Delay(500);
+            if (!File.Exists(newpath))
+            {
+                MessageBox.Show("Couldn't reload the Phoenix Bot profile", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+                
+
+            Bot.AttackWhitelist = true;
+            Bot.AttackBlacklist = false;
+            Bot.MonsterList.Clear();
+
+            Bot.LootBlacklist = false;
+            Bot.LootWhiteList = true;
+            Bot.LootList.Clear();
+
+            Bot.Path.Clear();
+
+            Bot.MiniEnabled = false;
+
+            api.stop_bot();
+            api.load_settings(newpath);
+            MessageBox.Show("Reloaded the original Phoenix Bot profile. DO NOT FORGET TO LOAD PROFILE TO MAS AGAIN", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
         private void OttercheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (OttercheckBox.Checked)
@@ -225,5 +296,6 @@ namespace Multi_Account_Synchronizer
         {
             Bot.SwordsmanSP1 = checkBox1.Checked;
         }
+
     }
 }

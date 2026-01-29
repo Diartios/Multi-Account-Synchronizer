@@ -12,14 +12,14 @@ namespace Multi_Account_Synchronizer
 {
     internal class Player : IDisposable
     {
-        public int x = -1;
-        public int y = -1;
-        public string name = "";
+        public int X = -1;
+        public int Y = -1;
+        public string Name = "";
         public string all = "";
-        public int id = -1;
-        public int map_id = -1;
-        public double hp = 100;
-        public double mp = 100;
+        public int Id = -1;
+        public int MapId = -1;
+        public double Hp = 100;
+        public double Mp = 100;
         public PhoenixApi phoenixapi = new PhoenixApi();
         public List<Item> Inventory = new List<Item>();
         public List<Tuple<string, int>> Skills = new List<Tuple<string, int>>();
@@ -153,7 +153,7 @@ namespace Multi_Account_Synchronizer
         }
         public void handle_ptctl(List<string> packet_splitted, string full_packet)
         {
-            map_id = int.Parse(packet_splitted[1]);
+            MapId = int.Parse(packet_splitted[1]);
             if (packet_splitted[2] == "2")
             {
                 int x1 = int.Parse(packet_splitted[4]);
@@ -188,7 +188,7 @@ namespace Multi_Account_Synchronizer
             for (int i = 1; i < packet_splitted.Count; i++)
             {
                 int skillvnum = int.Parse(packet_splitted[i]);
-                if (skillvnum == -1)
+                if (skillvnum == -2)
                     continue;
                 Pet.Skills[skillvnum] = false;
             }
@@ -207,6 +207,13 @@ namespace Multi_Account_Synchronizer
         {
             if (packet_splitted.Count < 2)
                 return;
+            if (packet_splitted[1] == "-1")
+            {
+                foreach (var k in Pet.Skills.Keys)
+                {
+                    Pet.Skills[k] = true;
+                }
+            }
             int index = int.Parse(packet_splitted[1]);
             if (index >= Pet.Skills.Count)
                 return;
@@ -219,7 +226,7 @@ namespace Multi_Account_Synchronizer
                 return;
             if (packet_splitted[1] != "1")
                 return;
-            if (packet_splitted[2] != id.ToString())
+            if (packet_splitted[2] != Id.ToString())
                 return;
             string[] split = packet_splitted[3].Split('.');
             if (split[1] == "378" && split[2] != "0")
@@ -248,7 +255,7 @@ namespace Multi_Account_Synchronizer
         {
             try
             {
-                name = packet_splitted[1];
+                Name = packet_splitted[1];
             }
             catch (Exception e)
             {
@@ -264,8 +271,8 @@ namespace Multi_Account_Synchronizer
                 double maxhp = int.Parse(packet_splitted[2]);
                 double currentmp = int.Parse(packet_splitted[3]);
                 double maxmp = int.Parse(packet_splitted[4]);
-                hp = (currenthp / maxhp) * 100;
-                mp = (currentmp / maxmp) * 100;
+                Hp = (currenthp / maxhp) * 100;
+                Mp = (currentmp / maxmp) * 100;
             }
             catch (Exception e)
             {
@@ -276,11 +283,11 @@ namespace Multi_Account_Synchronizer
         public void handle_player_infos(string playe_info)
         {
             JObject player_info = JObject.Parse(playe_info);
-            x = ((int)player_info["player_info"]["x"]);
-            y = ((int)player_info["player_info"]["y"]);
-            name = player_info["player_info"]["name"].ToString();
-            id = ((int)player_info["player_info"]["id"]);
-            map_id = ((int)player_info["player_info"]["map_id"]);
+            X = ((int)player_info["player_info"]["x"]);
+            Y = ((int)player_info["player_info"]["y"]);
+            Name = player_info["player_info"]["name"].ToString();
+            Id = ((int)player_info["player_info"]["id"]);
+            MapId = ((int)player_info["player_info"]["map_id"]);
             all = playe_info;
         }
         private void HandleSu(List<string> packetSplitted, string fullPacket)
@@ -290,6 +297,18 @@ namespace Multi_Account_Synchronizer
             {
                 Pet.Skills[1714] = false;
             }
+            if (packetSplitted[1] != "1")
+                return;
+            if (packetSplitted[2] != Id.ToString())
+                return;
+            int x = int.Parse(packetSplitted[9]);
+            int y = int.Parse(packetSplitted[10]);
+            if (x != 0 && y != 0)
+            {
+                this.X = x;
+                this.Y = y;
+                Console.WriteLine(fullPacket);
+            }
         }
         public void handle_cond(List<string> packet_splitted, string full_packet)
         {
@@ -297,7 +316,7 @@ namespace Multi_Account_Synchronizer
             try
             {
                 if (packet_splitted[1] == "1")
-                    id = int.Parse(packet_splitted[2]);
+                    Id = int.Parse(packet_splitted[2]);
             }
             catch (Exception e)
             {
@@ -310,8 +329,8 @@ namespace Multi_Account_Synchronizer
             Dancing = false;
             try
             {
-                x = int.Parse(packet_splitted[1]);
-                y = int.Parse(packet_splitted[2]);
+                X = int.Parse(packet_splitted[1]);
+                Y = int.Parse(packet_splitted[2]);
             }
             catch (Exception e)
             {
@@ -325,10 +344,10 @@ namespace Multi_Account_Synchronizer
             Dancing = false;
             try
             {
-                id = int.Parse(packet_splitted[1]);
-                map_id = int.Parse(packet_splitted[2]);
-                x = int.Parse(packet_splitted[3]);
-                y = int.Parse(packet_splitted[4]);
+                Id = int.Parse(packet_splitted[1]);
+                MapId = int.Parse(packet_splitted[2]);
+                X = int.Parse(packet_splitted[3]);
+                Y = int.Parse(packet_splitted[4]);
             }
             catch (Exception)
             {
@@ -340,18 +359,18 @@ namespace Multi_Account_Synchronizer
         {
             if (packet_splitted.Count() < 5)
                 return;
-            if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "0")
+            if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == Id.ToString() && packet_splitted[4] == "0")
                 Dancing = true;
-            else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString() && packet_splitted[4] == "-1")
+            else if (packet_splitted[1] == "5" && packet_splitted[2] == "1" && packet_splitted[3] == Id.ToString() && packet_splitted[4] == "-1")
                 Dancing = false;
             if (packet_splitted.Count() < 9)
                 return;
             try
             {
-                if (packet_splitted[1] == "3" && packet_splitted[2] == "1" && packet_splitted[3] == id.ToString())
+                if (packet_splitted[1] == "3" && packet_splitted[2] == "1" && packet_splitted[3] == Id.ToString())
                 {
-                    x = int.Parse(packet_splitted[4]);
-                    y = int.Parse(packet_splitted[5]);
+                    X = int.Parse(packet_splitted[4]);
+                    Y = int.Parse(packet_splitted[5]);
                 }
                 if (packet_splitted[1] == "3" && packet_splitted[2] == "2" && packet_splitted[3] == Pet.Id.ToString())
                 {
@@ -369,10 +388,10 @@ namespace Multi_Account_Synchronizer
         {
             if (packet_splitted.Count() < 4)
                 return;
-            if (packet_splitted[1] == "1" && packet_splitted[2] == id.ToString())
+            if (packet_splitted[1] == "1" && packet_splitted[2] == Id.ToString())
             {
-                x = int.Parse(packet_splitted[3]);
-                y = int.Parse(packet_splitted[4]);
+                X = int.Parse(packet_splitted[3]);
+                Y = int.Parse(packet_splitted[4]);
             }
             if (packet_splitted[1] == "2" && packet_splitted[2] == Pet.Id.ToString())
             {

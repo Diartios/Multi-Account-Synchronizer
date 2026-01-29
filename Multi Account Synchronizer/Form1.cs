@@ -116,7 +116,7 @@ namespace Multi_Account_Synchronizer
             {
                 foreach (var port in ports)
                 {
-                    if (port.Split(' ').Length != 2)
+                    if (port.Split(' ').Length != 3)
                         continue;
                     if (port.Split(' ')[0] == member["name"].ToString())
                     {
@@ -306,11 +306,11 @@ namespace Multi_Account_Synchronizer
             if (!File.Exists("Members.json"))
                 return;
 
-            while (player.id <= 0 || player.name == "")
+            while (player.Id <= 0 || player.Name == "")
                 await Task.Delay(100);
-            bot.Random = new Random(player.id);
+            bot.Random = new Random(player.Id);
             JObject Members = new JObject();
-            Random random = new Random(player.id);
+            Random random = new Random(player.Id);
             RadioButton DPS = b.radioButton1;
             RadioButton Buffer = b.radioButton2;
             RadioButton MinilandOwner = b.radioButton3;
@@ -367,7 +367,7 @@ namespace Multi_Account_Synchronizer
             foreach (var member in Members["Members"])
             {
 
-                if (((int)member["id"]) == player.id)
+                if (((int)member["id"]) == player.Id)
                 {
                     DPS.Checked = Statics.JsonGetValueOrDefault(member, "DPS", false);
                     Buffer.Checked = Statics.JsonGetValueOrDefault(member, "Buffer", true);
@@ -379,7 +379,7 @@ namespace Multi_Account_Synchronizer
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
                     if (path != "")
                     {
-                        var result = MessageBox.Show($"Profile {path} found in settings for {player.name} do you want to load it?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        var result = MessageBox.Show($"Profile {path} found in settings for {player.Name} do you want to load it?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                         if (result == DialogResult.Yes)
                         {
                             b.textBox2.Text = path;
@@ -447,7 +447,7 @@ namespace Multi_Account_Synchronizer
                 string accs = "";
                 foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.Path.Count == 0))
                 {
-                    accs += $"{a.Item3.name}, ";
+                    accs += $"{a.Item3.Name}, ";
                 }
                 accs = accs.Remove(accs.Length - 2);
                 MessageBox.Show($"Accounts {accs} has 0 walking points in path. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -458,8 +458,8 @@ namespace Multi_Account_Synchronizer
                 string points = "";
                 foreach (var item in apis.Where(x => x.Item5.DPS))
                 {
-                    if (!points.Contains(item.Item3.name))
-                        points += $"{item.Item3.name}:";
+                    if (!points.Contains(item.Item3.Name))
+                        points += $"{item.Item3.Name}:";
                     List<WalkPoint> wpoints = item.Item5.Path.Where(x => x.Kill).ToList();
                     foreach (WalkPoint p in wpoints)
                     {
@@ -482,7 +482,7 @@ namespace Multi_Account_Synchronizer
                 string accs = "";
                 foreach (var a in apis.Where(x => x.Item5.DPS && x.Item5.AttackWhitelist && x.Item5.MonsterList.Count == 0))
                 {
-                    accs += $"{a.Item3.name}, ";
+                    accs += $"{a.Item3.Name}, ";
                 }
                 accs = accs.Remove(accs.Length - 2);
                 MessageBox.Show($"Accounts {accs} is on whitelist mode in combat and has 0 monsters in it. Check Phoenix Bot profiles.", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -494,6 +494,12 @@ namespace Multi_Account_Synchronizer
                 if (api == null)
                     return;
                 var result = MessageBox.Show($"Miniland invite command is '{api.Item5.InviteCommand}' are you sure about starting the bot?", "QUESTION", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    return;
+            }
+            else if (apis.Count(x => x.Item5.MinilandOwner) > 0 && apis.Count(x => x.Item5.MiniEnabled) <= 0)
+            {
+                var result = MessageBox.Show("There is miniland owner but no accs have miniland option enabled. Are you sure about starting the bot?","QUESTION",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
                 if (result == DialogResult.No)
                     return;
             }
@@ -600,8 +606,8 @@ namespace Multi_Account_Synchronizer
                     partnerBuffs.Add(i);
                 }
                 JObject newItem = new JObject();
-                newItem.Add("name", api.Item3.name);
-                newItem.Add("id", api.Item3.id);
+                newItem.Add("name", api.Item3.Name);
+                newItem.Add("id", api.Item3.Id);
                 newItem.Add("DPS", api.Item5.DPS);
                 newItem.Add("Miniland Owner", api.Item5.MinilandOwner);
                 newItem.Add("Buffer", api.Item5.Buffer);
@@ -652,11 +658,11 @@ namespace Multi_Account_Synchronizer
                 while (!MinilandOwner.Item3.updated && sw.Elapsed.TotalSeconds <= 5)
                     await Task.Delay(1);
                 int seedofpowercount = MinilandOwner.Item3.Inventory.Where(x => x.Vnum == 1012).Sum(x => x.Quantity);
-                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS && x.Item5.MiniEnabled).Select(x => x.Item3.name).ToList();
-                timetobuff = apis.Count(x => x.Item3.map_id == 20001) == apis.Count();
+                MinilandOwner.Item5.DPSAccounts = apis.Where(x => x.Item5.DPS && x.Item5.MiniEnabled).Select(x => x.Item3.Name).ToList();
+                timetobuff = apis.Count(x => x.Item3.MapId == 20001) == apis.Count();
                 invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && x.Item5.MiniEnabled) == apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
                 leavemini = apis.Count(x => x.Item5.Buffing) == 0;
-                minilandownernick = MinilandOwner.Item3.name;
+                minilandownernick = MinilandOwner.Item3.Name;
                 entermini = apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
             }
 
