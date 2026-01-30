@@ -212,13 +212,13 @@ namespace Multi_Account_Synchronizer
 
             data["Attack"]["blacklist"] = Bot.AttackBlacklist.ToString().ToLower();
             data["Attack"]["whitelist"] = Bot.AttackWhitelist.ToString().ToLower();
-            data["Attack"]["monsters\\size"] = $"{Bot.MonsterList.Count + 1}";
+            data["Attack"]["monsters\\size"] = $"{Bot.MonsterList.Count}";
 
             data["Loot"]["blacklist"] = Bot.LootBlacklist.ToString().ToLower();
             data["Loot"]["whitelist"] = Bot.LootWhiteList.ToString().ToLower();
-            data["Loot"]["loot_items\\size"] = $"{Bot.LootList.Count + 1}";
+            data["Loot"]["loot_items\\size"] = $"{Bot.LootList.Count}";
 
-            data["Walking"]["path\\size"] = $"{Bot.Path.Count + 1}";
+            data["Walking"]["path\\size"] = $"{Bot.Path.Count}";
 
             data["Miniland"]["enabled"] = Bot.MiniEnabled.ToString().ToLower();
             data["Miniland"]["miniland_on_waypoint"] = Bot.MiniOnWaypoint.ToString().ToLower();
