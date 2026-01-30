@@ -663,7 +663,7 @@ namespace Multi_Account_Synchronizer
                 invite = apis.Count(x => x.Item5.WaitingForMiniland && x.Item5.DPS && (x.Item5.MiniEnabled || x.Item5.MiniOnWaypoint)) == apis.Count(x => x.Item5.DPS && (x.Item5.MiniEnabled || x.Item5.MiniOnWaypoint));
                 leavemini = apis.Count(x => x.Item5.Buffing) == 0;
                 minilandownernick = MinilandOwner.Item3.Name;
-                entermini = (apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 || apis.Count(x => x.Item5.MiniOnWaypoint && x.Item5.LastPath == x.Item5.MiniWaypointIndex && x.Item5.DPS) == apis.Count(x => x.Item5.MiniOnWaypoint && x.Item5.DPS)) && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
+                entermini = (apis.Count(x => x.Item5.Minilandsw.Elapsed.TotalSeconds >= x.Item5.MinilandInterval || x.Item5.Minilandsw.Elapsed.TotalSeconds == 0) > 0 || apis.Count(x => x.Item5.MiniOnWaypoint && x.Item5.LastPath == x.Item5.MiniWaypointIndex && x.Item5.DPS) == apis.Count(x => x.Item5.DPS)) && seedofpowercount >= apis.Count(x => x.Item5.DPS && x.Item5.MiniEnabled);
 
             }
 
@@ -705,7 +705,7 @@ namespace Multi_Account_Synchronizer
             foreach (var api in apis)
             {
                 if (stopbots)
-                {
+                {   
                     api.Item5.StopAllBots = false;
                     api.Item5.run = false;
                     api.Item5.AddLog("Bot stopped due to security reasons", "Security");
