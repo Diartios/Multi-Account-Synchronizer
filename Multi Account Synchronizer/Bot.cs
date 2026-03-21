@@ -74,6 +74,7 @@ namespace Multi_Account_Synchronizer
         #region Some Lure Shit
         public bool Otter = false;
         public bool Panda = false;
+        public bool SantaClaws = false;
         public bool SwordsmanSP1 = false;
         public bool UseVoke = false;
         public bool UpdateVoke = false;
@@ -679,6 +680,8 @@ namespace Multi_Account_Synchronizer
                 isReady = Player.Pet.Skills[1714];
             else if (Otter && Player.Pet.Skills.ContainsKey(663))
                 isReady = Player.Pet.Skills[663];
+            else if (SantaClaws && Player.Pet.Skills.ContainsKey(1890))
+                isReady = Player.Pet.Skills[1890];
             return isReady;
         }
         private async Task<bool> IsSwordsmanVokeReady()
@@ -785,6 +788,24 @@ namespace Multi_Account_Synchronizer
 
                         }
                     }
+                    if (SantaClaws && IsVokeReady() && Scene.MonstersInRadius(Player.X,Player.Y,AttackSearchRadius,AttackBlacklist,AttackWhitelist,MonsterList) >= MinVokeMonsterCount)
+                    {
+                        var mob = Scene.EntityData.Values.Where(x => x.Id == LureMob).FirstOrDefault();
+                        if (mob != null)
+                        {
+
+
+                            if (Statics.Distance(mob.Pos, new Point(Player.Pet.X, Player.Pet.Y)) <= Math.Sqrt(2) && VokeMonsterCount() >= MinVokeMonsterCount)
+                            {
+                                Api.use_pet_skill(LureMob, 1890);
+                            }
+                            else if (VokeMonsterCount() >= MinVokeMonsterCount)
+                            {
+                                Api.pets_walk(mob.Pos.X, mob.Pos.Y);
+                            }
+
+                        }
+                    }
                 }
             }
             KiteMob = null;
@@ -804,7 +825,7 @@ namespace Multi_Account_Synchronizer
             int count = 0;
             if (!Scene.EntityData.ContainsKey(LureMob))
                 return 0;
-            if (Otter)
+            if (Otter || SantaClaws)
             {
                 //Scene.MonstersInRadius(Player.Pet.X, Player.Pet.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList, IgnoreVokeRadius);
                 count = Scene.MonstersInRadius(Scene.EntityData[LureMob].Pos.X, Scene.EntityData[LureMob].Pos.Y, 6, AttackBlacklist, AttackWhitelist, MonsterList, IgnoreVokeRadius);
@@ -1094,8 +1115,6 @@ namespace Multi_Account_Synchronizer
             #region Miniland
             MiniEnabled = Statics.IniGetValueOrDefault(data, "Miniland", "enabled", true);
             MinilandInterval = Statics.IniGetValueOrDefault(data, "Miniland", "delay", 300);
-            DelaySameKey = Statics.IniGetValueOrDefault(data, "Miniland", "same_key_delay", 200);
-            DelayDifferentKey = Statics.IniGetValueOrDefault(data, "Miniland", "diff_key_delay", 2000);
             MiniOnWaypoint = Statics.IniGetValueOrDefault(data, "Miniland", "miniland_on_waypoint", false);
             MiniWaypointIndex = Statics.IniGetValueOrDefault(data, "Miniland", "miniland_waypoint_index", -1);
             #endregion

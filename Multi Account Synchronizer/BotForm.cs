@@ -260,6 +260,8 @@ namespace Multi_Account_Synchronizer
             {
                 if (PandaCheckBox.Checked)
                     PandaCheckBox.Checked = false;
+                if (SantaClawsCheckBox.Checked)
+                    SantaClawsCheckBox.Checked = false;
                 if (!player.Pet.Skills.ContainsKey(663))
                 {
                     player.Pet.Skills.Clear();
@@ -276,6 +278,8 @@ namespace Multi_Account_Synchronizer
             {
                 if (OttercheckBox.Checked)
                     OttercheckBox.Checked = false;
+                if (SantaClawsCheckBox.Checked)
+                    SantaClawsCheckBox.Checked = false;
                 if (!player.Pet.Skills.ContainsKey(1714))
                 {
                     player.Pet.Skills.Clear();
@@ -298,5 +302,21 @@ namespace Multi_Account_Synchronizer
             Bot.SwordsmanSP1 = checkBox1.Checked;
         }
 
+        private void SantaClawsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SantaClawsCheckBox.Checked)
+            {
+                if (OttercheckBox.Checked)
+                    OttercheckBox.Checked = false;
+                if (PandaCheckBox.Checked)
+                    PandaCheckBox.Checked = false;
+                if (!player.Pet.Skills.ContainsKey(1890))
+                {
+                    player.Pet.Skills.Clear();
+                    player.Pet.Skills[1890] = true;
+                }
+            }
+            Bot.SantaClaws = SantaClawsCheckBox.Checked;
+        }
     }
 }

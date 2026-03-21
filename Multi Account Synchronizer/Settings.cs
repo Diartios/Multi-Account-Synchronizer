@@ -240,5 +240,20 @@ namespace Multi_Account_Synchronizer
         {
             apis.ForEach(x => x.Item5.IgnoreVokeRadius = ((int)IgnoreVokeRadius.Value));
         }
+
+        private void label17_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void delaySameKeys_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.DelaySameKey = ((int)delaySameKeys.Value));
+        }
+
+        private void delayDifferentKeys_ValueChanged(object sender, EventArgs e)
+        {
+            apis.ForEach(x => x.Item5.DelayDifferentKey = ((int)delayDifferentKeys.Value));
+        }
     }
 }

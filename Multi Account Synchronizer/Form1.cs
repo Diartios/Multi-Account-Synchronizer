@@ -317,6 +317,7 @@ namespace Multi_Account_Synchronizer
             NumericUpDown DelayMultipler = b.numericUpDown1;
             CheckBox Otter = b.OttercheckBox;
             CheckBox Panda = b.PandaCheckBox;
+            CheckBox SantaClaws = b.SantaClawsCheckBox;
             CheckBox swordsmanSP1 = b.checkBox1;
             string path = "";
             using (StreamReader file = new StreamReader("Members.json"))
@@ -334,6 +335,8 @@ namespace Multi_Account_Synchronizer
             int attackluremax = Statics.JsonGetValueOrDefault(Members["General Settings"], "Attack Lure Max", 2100);
             int delayAfterKillMin = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Min", 400);
             int delayAfterKillMax = Statics.JsonGetValueOrDefault(Members["General Settings"], "After Kill Point Max", 850);
+            int sameKeys = Statics.JsonGetValueOrDefault(Members["General Settings"], "Same Keys", 200);
+            int differentKeys = Statics.JsonGetValueOrDefault(Members["General Settings"], "Different Keys", 2000);
             int normalFlower = Statics.JsonGetValueOrDefault(Members["General Settings"], "Normal Flower", 420);
             int strongFlower = Statics.JsonGetValueOrDefault(Members["General Settings"], "Strong Flower", 40);
             string inviteCommand = Statics.JsonGetValueOrDefault(Members["General Settings"], "Invite Command", "");
@@ -364,6 +367,8 @@ namespace Multi_Account_Synchronizer
             bot.TrashItems = trashItems;
             bot.TrashItemsChance = trashItemsChance;
             bot.IgnoreVokeRadius = ignoreVokeRadius;
+            bot.DelaySameKey = sameKeys;
+            bot.DelayDifferentKey = differentKeys;
             foreach (var member in Members["Members"])
             {
 
@@ -374,6 +379,7 @@ namespace Multi_Account_Synchronizer
                     MinilandOwner.Checked = Statics.JsonGetValueOrDefault(member, "Miniland Owner", false);
                     Otter.Checked = Statics.JsonGetValueOrDefault(member, "Otter", false);
                     Panda.Checked = Statics.JsonGetValueOrDefault(member, "Panda", false);
+                    SantaClaws.Checked = Statics.JsonGetValueOrDefault(member, "Santa Claws", false);
                     swordsmanSP1.Checked = Statics.JsonGetValueOrDefault(member, "Swordsman SP1", false);
                     DelayMultipler.Value = Convert.ToDecimal(Statics.JsonGetValueOrDefault(member, "Delay Multipler", 1.0));
                     path = Statics.JsonGetValueOrDefault(member, "Path", "");
@@ -570,6 +576,8 @@ namespace Multi_Account_Synchronizer
             generalSettings.Add("Attack Lure Max", a.Item5.StartAttackDelay.Item2);
             generalSettings.Add("After Kill Point Min", a.Item5.DelayAfterKillPoint.Item1);
             generalSettings.Add("After Kill Point Max", a.Item5.DelayAfterKillPoint.Item2);
+            generalSettings.Add("Same Keys", a.Item5.DelaySameKey);
+            generalSettings.Add("Different Keys", a.Item5.DelayDifferentKey);
             generalSettings.Add("Normal Flower", a.Item5.NormalFlowerUsage);
             generalSettings.Add("Strong Flower", a.Item5.StrongFlowerUsage);
             generalSettings.Add("Invite Command", a.Item5.InviteCommand);
@@ -614,6 +622,7 @@ namespace Multi_Account_Synchronizer
                 newItem.Add("Delay Multipler", ((double)api.Item6.numericUpDown1.Value));
                 newItem.Add("Otter", api.Item5.Otter);
                 newItem.Add("Panda", api.Item5.Panda);
+                newItem.Add("Santa Claws", api.Item5.SantaClaws);
                 newItem.Add("Swordsman SP1", api.Item5.SwordsmanSP1);
                 newItem.Add("Path", api.Item6.textBox2.Text);
                 newItem["buffs"] = buffs;
@@ -683,14 +692,6 @@ namespace Multi_Account_Synchronizer
             if (defencemobs.Count(x => x > 0) > 0)
                 defencemob = defencemobs.Where(x => x > 0).FirstOrDefault();
 
-            int samekeydelay = 200;
-            int differentkeydelay = 2000;
-            var a = apis.Where(x => x.Item5.DelaySameKey != 200 || x.Item5.DelayDifferentKey != 2000).FirstOrDefault();
-            if (a != null)
-            {
-                samekeydelay = a.Item5.DelaySameKey;
-                differentkeydelay = a.Item5.DelayDifferentKey;
-            }
             bool updateVoke = apis.Count(x => x.Item5.UpdateVoke) == apis.Count(x => x.Item5.DPS);
             var vokeAcc = apis.Where(x => x.Item5.DPS && x.Item5.IsVokeReady()).FirstOrDefault();
             if (vokeAcc != null)
@@ -720,8 +721,6 @@ namespace Multi_Account_Synchronizer
                 api.Item5.LureMob = luremob;
                 api.Item5.StartAttack = startkill;
                 api.Item5.OwnerName = minilandownernick;
-                api.Item5.DelayDifferentKey = differentkeydelay;
-                api.Item5.DelaySameKey = samekeydelay;
                 api.Item5.ShouldStop = shouldStop;
                 if (reset)
                 {

@@ -312,7 +312,6 @@ namespace Multi_Account_Synchronizer
         }
         public void handle_cond(List<string> packet_splitted, string full_packet)
         {
-            //cond 1 6830366 0 0 16
             try
             {
                 if (packet_splitted[1] == "1")
